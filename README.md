@@ -1,6 +1,6 @@
-# Computational Intelligence Lab - Spring 2020
-## Team
-- <b>Daniele Chiappalupi</b> ([@daniCh8](https://github.com/daniCh8))<br>dchiappal@student.ethz.ch
-- <b>Elena Iannucci</b> ([@eleiannu](https://github.com/eleiannu))<br>eiannucci@student.ethz.ch
-- <b>Samuele Piazzetta</b>
-- <b>Gianluca Lain</b>
+# [Computational Intelligence Lab](http://www.vvz.ethz.ch/Vorlesungsverzeichnis/lerneinheit.view?lang=en&lerneinheitId=135225&semkez=2020S&ansicht=KATALOGDATEN&) 2020, Course Project
+## Team 
+- ### Daniele Chiappalupi ([@daniCh8](https://github.com/daniCh8))<br>dchiappal@student.ethz.ch
+- ### Elena Iannucci ([@eleiannu](https://github.com/eleiannu))<br>eiannucci@student.ethz.ch
+- ### Samuele Piazzetta
+- ### Gianluca Lain
