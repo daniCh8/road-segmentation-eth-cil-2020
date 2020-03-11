@@ -2,5 +2,5 @@
 ## Team 
 - ### Daniele Chiappalupi ([@daniCh8](https://github.com/daniCh8))<br>dchiappal@student.ethz.ch
 - ### Elena Iannucci ([@eleiannu](https://github.com/eleiannu))<br>eiannucci@student.ethz.ch
-- ### Samuele Piazzetta
+- ### Samuele Piazzetta ([@piaz97](https://github.com/piaz97))<br>samuele.piazzetta@gmail.com
 - ### Gianluca Lain
