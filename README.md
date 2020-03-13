@@ -3,4 +3,4 @@
 - ### Daniele Chiappalupi ([@daniCh8](https://github.com/daniCh8))<br>dchiappal@student.ethz.ch
 - ### Elena Iannucci ([@eleiannu](https://github.com/eleiannu))<br>eiannucci@student.ethz.ch
 - ### Samuele Piazzetta ([@piaz97](https://github.com/piaz97))<br>samuele.piazzetta@gmail.com
-- ### Gianluca Lain
+- ### Gianluca Lain ([@OsD977](https://github.com/OsD977))<br>gianluca.lain97@gmail.com
