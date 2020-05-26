@@ -8,9 +8,12 @@ from TestData import TestData
 from Labelizer import Labelizer
 from visualization import display_predictions
 from utils import preprocess_test_images, merge_predictions
-from uresxception import create_model as uresxception_net
-from uxception import create_model as uxception_net
-from uresxceptionsp import create_model as uresxceptionsp_net
+from nets.uresxception import create_model as uresxception_net
+from nets.uxception import create_model as uxception_net
+from nets.uresxceptionsp import create_model as uresxceptionsp_net
+from nets.deepresunet import create_model as deepures_net
+from nets.uresnet50v2 import create_model as uresnet50v2_net
+from nets.dunet import create_model as du_net
 
 import numpy as np
 import pandas as pd
@@ -18,7 +21,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 
 
-def create_callbacks(loss='bce', checkpoint_path='model_checkpoint.h5', with_val=False):
+def create_callbacks(loss='bce', checkpoint_path='../checkpoints/model_checkpoint.h5', with_val=False):
     if with_val:
         monitor_prefix = 'val_'
     else:
@@ -51,7 +54,7 @@ def soft_dice_loss(y_true, y_pred):
 
 class NNet:
     def __init__(self, val_split=.0, model_to_load='None', net_type='uxception'):
-        assert net_type in ['uxception', 'uresxception', 'uresxceptionsp'], "net_type must be one of ['uxception', uresxception', 'uresxceptionsp']"
+        assert net_type in ['uxception', 'uresxception', 'uresxceptionsp', 'deepuresnet', 'uresnet50v2', 'dunet'], "net_type must be one of ['uxception', 'uresxception', 'uresxceptionsp', 'deepuresnet', 'uresnet50v2', 'dunet']"
         self.net_type = net_type
         if model_to_load == 'None':
             if net_type == 'uxception':
@@ -60,9 +63,18 @@ class NNet:
             elif net_type == 'uresxception':
                 self.model = uresxception_net()
                 print('created model: unet with xception blocks mixed with residual blocks as encoders')
-            else:
+            elif net_type == 'uresxceptionsp':
                 self.model = uresxceptionsp_net()
                 print('created model: unet with xception blocks mixed with spatial pyramid pooling blocks as encoders')
+            elif net_type == 'deepuresnet':
+                self.model = deepures_net()
+                print('created model: deep unet with residual blocks as encoders')
+            elif net_type == 'uresnet50v2':
+                self.model = uresxceptionsp_net()
+                print('created model: unet with resnet50v2 blocks as encoders')
+            elif net_type == 'dunet':
+                self.model = du_net()
+                print('created model: dimension-fusion unet')
         else:
             self.model = load_model(model_to_load, custom_objects= {'soft_dice_loss':soft_dice_loss, 'dice_coef':dice_coef, 'iou_coef':iou_coef})
             print('loaded model: {}'.format(model_to_load))

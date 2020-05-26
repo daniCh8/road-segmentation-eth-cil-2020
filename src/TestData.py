@@ -6,7 +6,7 @@ import re
 import numpy as np
 
 class TestData:
-    def __init__(self, image_path= '../data/test_images/'):
+    def __init__(self, image_path= '../../data/test_images/'):
         test_names = os.listdir(image_path)
 
         self.images = []
