@@ -1,8 +1,8 @@
 import numpy as np
 
 class Labelizer:
-    def __init__(self):
-        self.treshold = 0.25
+    def __init__(self, treshold=.25):
+        self.treshold = treshold
         
     def patchize(self, pred, number, patch_size= 16, step= 16):
         labels  = []
