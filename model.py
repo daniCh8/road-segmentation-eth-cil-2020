@@ -50,7 +50,7 @@ def soft_dice_loss(y_true, y_pred):
     return 1-dice_coef(y_true, y_pred)
 
 class NNet:
-    def __init__(self, input_shape=(400, 400, 3), val_split=.0, model_to_load='None', net_type='uxception'):
+    def __init__(self, val_split=.0, model_to_load='None', net_type='uxception'):
         assert net_type in ['uxception', 'uresxception', 'uresxceptionsp'], "net_type must be one of ['uxception', uresxception', 'uresxceptionsp']"
         self.net_type = net_type
         if model_to_load == 'None':
@@ -136,8 +136,8 @@ class NNet:
         plt.figure(figsize= (15, 15))
         display_predictions(self.test_images, self.test_images_predictions)
     
-    def create_submission_file(self, path='submission.csv'):
-        labelizer = Labelizer()
+    def create_submission_file(self, path='submission.csv', treshold=.25):
+        labelizer = Labelizer(treshold)
         submission = labelizer.make_submission(self.test_images_predictions, self.test_data_gen.numbers)
         submission_df = pd.DataFrame({'id': submission[1], 'prediction': submission[0]})
         submission_df.to_csv(path, index=False)
