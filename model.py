@@ -10,6 +10,7 @@ from visualization import display_predictions
 from utils import preprocess_test_images, merge_predictions
 from uresxception import create_model as uresxception_net
 from uxception import create_model as uxception_net
+from uresxceptionsp import create_model as uresxceptionsp_net
 
 import numpy as np
 import pandas as pd
@@ -50,13 +51,18 @@ def soft_dice_loss(y_true, y_pred):
 
 class NNet:
     def __init__(self, input_shape=(400, 400, 3), val_split=.0, model_to_load='None', net_type='uxception'):
-        assert net_type in ['uxception', 'uresxception'], "net_type must be one of ['uxception', uresxception']"
-        
+        assert net_type in ['uxception', 'uresxception', 'uresxceptionsp'], "net_type must be one of ['uxception', uresxception', 'uresxceptionsp']"
+        self.net_type = net_type
         if model_to_load == 'None':
             if net_type == 'uxception':
                 self.model = uxception_net()
-            else:
+                print('created model: unet with xception blocks as encoders')
+            elif net_type == 'uresxception':
                 self.model = uresxception_net()
+                print('created model: unet with xception blocks mixed with residual blocks as encoders')
+            else:
+                self.model = uresxceptionsp_net()
+                print('created model: unet with xception blocks mixed with spatial pyramid pooling blocks as encoders')
         else:
             self.model = load_model(model_to_load, custom_objects= {'soft_dice_loss':soft_dice_loss, 'dice_coef':dice_coef, 'iou_coef':iou_coef})
             print('loaded model: {}'.format(model_to_load))
@@ -93,7 +99,7 @@ class NNet:
             steps = len(self.data.images) // batch_size
         
             if self.val_split != .0:
-                self.model.fit_generator(generator=self.data.generator(batch_size), validation_data=self.valid_set, epochs=epochs, steps_per_epoch=steps)
+                self.model.fit_generator(generator=self.data.generator(batch_size), validation_data=self.valid_set, epochs=epochs, steps_per_epoch=steps, callbacks=create_callbacks(loss, with_val=True))
             else:
                 self.model.fit_generator(generator=self.data.generator(batch_size), epochs=epochs, steps_per_epoch=steps, callbacks=create_callbacks(loss))
                 
@@ -116,7 +122,9 @@ class NNet:
         groundtruths = labelizer.make_submission(self.valid_set[1])[0]
         print(accuracy_score(groundtruths, predictions_labs))
         
-    def save_model(self, path="model-unet-xception.h5"):
+    def save_model(self, path=None):
+        if path == None:
+            path = "model-{}.h5".format(self.net_type)
         self.model.save(path, overwrite=True, include_optimizer=False)
     
     def predict_test_data(self):
