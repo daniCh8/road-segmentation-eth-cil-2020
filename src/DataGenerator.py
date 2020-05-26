@@ -10,7 +10,7 @@ import random
 
 
 class DataGenerator:
-    def __init__(self, image_path='../data/training/images/', groundtruth_path='../data/training/groundtruth/', val_split=0.1, additional_images_path='../additional_data_generation/additional_data/images/', additional_masks_path='../additional_data_generation/additional_data/masks/'):
+    def __init__(self, image_path='../../data/training/images/', groundtruth_path='../../data/training/groundtruth/', val_split=0.1, additional_images_path='../../additional_data_generation/additional_data/images/', additional_masks_path='../../additional_data_generation/additional_data/masks/'):
         training_images = os.listdir(image_path)
         training_truths = os.listdir(groundtruth_path)
         
