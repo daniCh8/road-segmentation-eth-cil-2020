@@ -6,7 +6,9 @@
 - ### Gianluca Lain ([@OsD977](https://github.com/OsD977))<br>gianluca.lain97@gmail.com
 
 ## Project Description
-The goal of the project is to create a model able to detect and extract road networks from aerial images. We tried many different networks, and then built an ensemble of the most accurate ones.
+The goal of the project is to create a model able to detect and extract road networks from aerial images. We tried many different networks, and then built an ensemble of the most accurate ones. Here is a sample prediction of our ensemble:
+
+![sample_prediction](https://i.postimg.cc/YSDz1pF5/cropped-sample-prediction.png)
 
 ## Network Types
 ### [U-Xception Net](/src/nets/uxception.py)
