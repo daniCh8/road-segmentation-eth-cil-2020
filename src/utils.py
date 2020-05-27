@@ -1,3 +1,8 @@
+import os
+import sys
+from PIL import Image
+import math
+import matplotlib.image as mpimg
 import numpy as np
 
 def split_picture(test_picture):
@@ -51,3 +56,53 @@ def merge_predictions(predictions, mode='mean'):
         merged.append(merge_splits(predictions[i], predictions[i+1], predictions[i+2], predictions[i+3], mode))
 
     return merged
+
+#
+# the code below was rearranged by the code provided by the course's TAs, and it's used to build masks from a submission csv file
+# 
+
+def binary_to_uint8(img):
+    rimg = (img * 255).round().astype(np.uint8)
+    return rimg
+
+def reconstruct_from_labels(lines, image_id):
+    h = 16
+    w = h
+    imgwidth = int(math.ceil((600.0/w))*w)
+    imgheight = int(math.ceil((600.0/h))*h)
+    nc = 3
+    
+    im = np.zeros((imgwidth, imgheight), dtype=np.uint8)
+    image_id_str = '%.3d_' % image_id
+    for i in range(1, len(lines)):
+        line = lines[i]
+        if not image_id_str in line:
+            continue
+
+        tokens = line.split(',')
+        id = tokens[0]
+        prediction = int(tokens[1])
+        tokens = id.split('_')
+        i = int(tokens[1])
+        j = int(tokens[2])
+
+        je = min(j+w, imgwidth)
+        ie = min(i+h, imgheight)
+        if prediction == 0:
+            adata = np.zeros((w,h))
+        else:
+            adata = np.ones((w,h))
+
+        im[j:je, i:ie] = binary_to_uint8(adata)
+        
+    return im
+
+def submission_outputs(label_file, numbers):
+    f = open(label_file)
+    lines = f.readlines()
+    
+    predictions = []
+    for num in numbers:
+        predictions.append(reconstruct_from_labels(lines, num))
+    
+    return predictions

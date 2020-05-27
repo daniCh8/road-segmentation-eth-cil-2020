@@ -7,7 +7,7 @@ from DataGenerator import DataGenerator
 from TestData import TestData
 from Labelizer import Labelizer
 from visualization import display_predictions
-from utils import preprocess_test_images, merge_predictions
+from utils import preprocess_test_images, merge_predictions, submission_outputs
 from nets.uresxception import create_model as uresxception_net
 from nets.uxception import create_model as uxception_net
 from nets.uresxceptionsp import create_model as uresxceptionsp_net
@@ -144,9 +144,9 @@ class NNet:
         self.test_images_predictions = merge_predictions(predictions.reshape(-1, 400, 400,), mode='max')
         return self.test_images_predictions
     
-    def display_test_predictions(self):
+    def display_test_predictions(self, submission_path, samples_number=5):
         plt.figure(figsize= (15, 15))
-        display_predictions(self.test_images, self.test_images_predictions)
+        display_predictions(self.test_images, self.test_images_predictions, submission_outputs=submission_outputs(submission_path, self.test_data_gen.numbers), samples=samples_number)
     
     def create_submission_file(self, path='submission.csv', treshold=.25):
         labelizer = Labelizer(treshold)
