@@ -29,13 +29,13 @@ def squeeze_excitation_block(in_, c, r):
     x = Dense(c, activation='sigmoid')(x)
     return Multiply()([in_, x])
  
-def dimension_fusion_box(in_4d, in_3d):
+def dimension_fusion_box(in_4d, in_3d, shape, depth):
     x_4d = Conv3D(1, (1, 1, 1), padding='same')(in_4d)
-    x_4d = Reshape(target_shape=(in_4d.shape[1], in_4d.shape[2], in_4d.shape[3]))(x_4d)
-    x_4d = Conv2D(in_3d.shape[3], (3, 3), padding='same')(x_4d)
+    x_4d = Reshape(target_shape=(shape[0], shape[1], depth))(x_4d)
+    x_4d = Conv2D(shape[2], (3, 3), padding='same')(x_4d)
 
-    x_4d = squeeze_excitation_block(x_4d, in_3d.shape[3], 16)
-    x_3d = squeeze_excitation_block(in_3d, in_3d.shape[3], 16)
+    x_4d = squeeze_excitation_block(x_4d, shape[2], 16)
+    x_3d = squeeze_excitation_block(in_3d, shape[2], 16)
 
     x = Add()([x_3d, x_4d])
     return x
@@ -67,17 +67,17 @@ def create_model():
     track_3d_2 = conv2d_block(track_3d_1_up, 64) #200, 200, 64
     track_3d_2 = Dropout(.1)(track_3d_2)
 
-    track_3d_3 = dimension_fusion_box(track_4d_2, track_3d_2) #200, 200, 64
+    track_3d_3 = dimension_fusion_box(track_4d_2, track_3d_2, [200, 200, 64], 3) #200, 200, 64
     track_3d_3_up = MaxPooling2D()(track_3d_3) #100, 100, 64
     track_3d_3_conv = conv2d_block(track_3d_3_up, 128) #100, 100, 128
     track_3d_3_conv = Dropout(.1)(track_3d_3_conv)
 
-    track_3d_4 = dimension_fusion_box(track_4d_3, track_3d_3_conv) #100, 100, 128
+    track_3d_4 = dimension_fusion_box(track_4d_3, track_3d_3_conv, [100, 100, 128], 1) #100, 100, 128
     track_3d_4_up = MaxPooling2D()(track_3d_4) #50, 50, 128
     track_3d_4_conv = conv2d_block(track_3d_4_up, 256) #50, 50, 256
     track_3d_4_conv = Dropout(.1)(track_3d_4_conv)
 
-    track_3d_5 = dimension_fusion_box(track_4d_4, track_3d_4_conv) #50 50, 256 **new**
+    track_3d_5 = dimension_fusion_box(track_4d_4, track_3d_4_conv, [50, 50, 256], 1) #50 50, 256 **new**
     track_3d_5_up = MaxPooling2D()(track_3d_5) #25, 25, 256
     track_3d_5_conv = conv2d_block(track_3d_5_up, 512) #25, 25, 512
     track_3d_5_conv = Dropout(.1)(track_3d_5_conv)
