@@ -11,17 +11,23 @@ The goal of the project is to create a model able to detect and extract road net
 ![sample_prediction](https://i.postimg.cc/dt55wPQS/cropped-sample-prediction.png)
 
 ## Network Types
-### [U-Xception Net](/src/nets/uxception.py)
+### [U-Xception Net](/src/nets/u_xception.py)
 It's a U-Net that uses an Xception Net pretrained on the 'imagenet' dataset as encoder. The intermediate outputs of the Xception Net are taken as they are and fed to the decoders.
 
-### [U-Res-Xception Net](/src/nets/uresxception.py)
+### [URES-Xception](/src/nets/ures_xception.py)
 It's another U-Net that uses an Xception Net pretrained on the 'imagenet' dataset as encoder, but this time the intermediate outputs of the Xception Net are processed by two residual blocks before being fed to the decoders.
 
-### [U-Xception Net with Spatial Pyramid Pooling](/src/nets/uresxceptionsp.py)
-It's the same architecture of the U-Res-Xception Net, but instead of being processed by two residual blocks, the Xception outputs are refined by Spatial Pyramid blocks.
+### [USPP-Xception](/src/nets/uspp_xception.py)
+It's the same architecture of the network above, but instead of being processed by two residual blocks, the Xception outputs are refined by Spatial Pyramid blocks.
 
-### [U-ResNet](/src/nets/uresnet50v2.py)
-It's a U-Net that uses a pretrained ResNet50V2 as encoder. Like in the U-Res-Xception Net, the intermediate outputs of the pretrained net are processed by two residual blocks before being fed to the decoders.
+### [U-ResNet50V2 Net](/src/nets/u_resnet50v2.py)
+It's a U-Net that uses a ResNet50V2 pretrained on the 'imagenet' dataset as encoder. The intermediate outputs of the ResNet50V2 are vanilla fed to the decoders.
+
+### [URES-ResNet50V2 Net](/src/nets/ures_resnet50v2.py)
+It's a U-Net that uses a pretrained ResNet50V2 as encoder. Like in the URES-Xception Net, the intermediate outputs of the pretrained net are processed by two residual blocks before being fed to the decoders.
+
+### [USPP-ResNet50V2 Net](/src/nets/uspp_resnet50v2.py)
+It's the same architecture of the network above, but instead of being processed by two residual blocks, the ResNetV2 outputs are refined by Spatial Pyramid blocks.
 
 ### [DeepRes-UNet](/src/nets/deepresunet.py)
 It's a deep U-Net that does not use any pretrained net as encoder, but only residual blocks.
@@ -42,3 +48,21 @@ After training all the models of interest, an ensemble of them can be created th
 We gathered roughly 1000 additional images using the Google Maps API. The Jupyter Notebook we used to do so is available [here](/additional_maps_data.ipynb). Note that you will need an API key to be able to run it.
 
 We also used the [albumentations package](https://github.com/albumentations-team/albumentations) to augment the training dataset and make the networks able to generalize more. Those data augmentations are handled by the [DataGenerator](/src/DataGenerator.py) class.
+
+## Final Prediction
+In order to obtain the predictions, we used a mean ensemble of six models. Those models were the following:
+
+- [U-Xception Net](/src/nets/u_xception.py)
+- [URES-Xception Net](/src/nets/ures_xception.py)
+- [USPP-Xception Net](/src/nets/uspp_xception.py)
+- [U-ResNet50V2](/src/nets/u_resnet50v2.py)
+- [URES-ResNet50V2](/src/nets/ures_resnet50v2.py)
+- [USPP-ResNet50V2](/src/nets/uspp_resnet50v2.py)
+
+Each model has been first trained for 20 epochs on the additional data with `learning rate = .0001`, and then fine-tuned for 60 epochs on the competition data with `learning rate = .00001`. During both training and fine-tuning all of the aforementioned data augmentation have been used. Moreover, during the `fit` of the networks, both the callbacks *Early Stopping* and *Learning Rate reduction on Plateau* were on. The whole pipeline of fitting can be found [here](/src/single_model_trainer.ipynb).
+
+After training all the models, a mean ensemble of their predictions has been created [here](/src/ensemble_predictions.ipynb). Note that the averaging is made on the outputs of the neural networks, and not on the final binary submission values.
+
+Finally, the submission `csv` file is created with the parameter  `treshold = .4`.
+
+Note that the test images have a shape of  `608*608*3`, whereas the training images are  `400*400*3`. In order to make the predictions, we cut the test images in four squares of  size `400*400*3`, and then recomposed the full prediction merging those blocks, averaging the pixels in common. This is done in the function  `merge prediction`, which can be found in the [utils](/src/utils.py) module.
