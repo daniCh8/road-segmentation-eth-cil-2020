@@ -34,9 +34,9 @@ def create_callbacks(loss='bce', checkpoint_path='../checkpoints/model_checkpoin
         to_monitor = monitor_prefix+'dice_coef'
     reduce_lr = ReduceLROnPlateau(monitor=to_monitor, patience=3, mode='max', factor=0.5)
     early_stop = EarlyStopping(monitor=to_monitor, mode='max', patience=10)
-    checkpoint = ModelCheckpoint(checkpoint_path, monitor=to_monitor, mode='max', save_best_only=True)
+    #checkpoint = ModelCheckpoint(checkpoint_path, monitor=to_monitor, mode='max', save_best_only=True) #checkpoints usually slow down the process
 
-    return [reduce_lr, early_stop, checkpoint]
+    return [reduce_lr, early_stop]#, checkpoint]
 
 def iou_coef(y_true, y_pred, smooth=1):
     intersection = K.sum(K.abs(y_true * y_pred), axis=[1,2,3])
@@ -120,8 +120,8 @@ class NNet:
                 
         else:
             steps = len(self.data.additional_images) // batch_size
-            val_data = (np.array(self.data.images)/255, np.round(np.expand_dims(np.array(self.data.truths), -1)/255))
-            self.model.fit_generator(generator=self.data.additional_generator(batch_size), validation_data=val_data, epochs=epochs, steps_per_epoch=steps, callbacks=create_callbacks(loss))
+            #val_data = (np.array(self.data.images)/255, np.round(np.expand_dims(np.array(self.data.truths), -1)/255))
+            self.model.fit_generator(generator=self.data.additional_generator(batch_size), epochs=epochs, steps_per_epoch=steps, callbacks=create_callbacks(loss))
         
     def check_outputs(self):
         plt.figure(figsize= (15, 15))
