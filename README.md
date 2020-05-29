@@ -99,12 +99,12 @@ A json dump of the configurations for every run will also be stored in the submi
   "checkpoint_root": "../submissions/submission_29-05-2020,14-06/checkpoints/",
   "u_xception":
   {
-    "batch_size": 8,
+	"batch_size": 8,
 	"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/u_xception_checkpoint.h5"
   },
   "ures_xception":
   {
-	"batch_size": 6,
+    "batch_size": 6,
 	"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/ures_xception_checkpoint.h5"
   },
   "uspp_xception":
