@@ -1,5 +1,5 @@
 import keras
-from keras.layers import Conv2D, BatchNormalization, LeakyReLU, Add, MaxPooling2D, Dropout, concatenate, ZeroPadding2D, Conv2DTranspose
+from keras.layers import Input, Conv2D, BatchNormalization, LeakyReLU, Add, MaxPooling2D, Dropout, Concatenate, ZeroPadding2D, Conv2DTranspose
 from keras.applications import ResNet50V2
 from keras.models import Model
 
@@ -69,6 +69,6 @@ def create_model():
     output_ = Conv2D(1, (1, 1), padding='same', activation='sigmoid')(decoder1) #400, 400, 1
 
     model = Model(input_, output_)
-    model.name = 'uresnet50v2'
+    model.name = 'ures_resnet50v2'
 
     return model
