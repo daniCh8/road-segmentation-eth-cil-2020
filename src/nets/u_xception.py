@@ -24,7 +24,7 @@ def decoder_block(x, filters, kernel_size=(3, 3), activation=True):
     x = res_block(x, filters)
     x = res_block(x, filters)
     if activation == True:
-      x = LeakyReLU(alpha=.1) (x)
+        x = LeakyReLU(alpha=.1) (x)
     return x
 
 def create_model():
@@ -71,6 +71,6 @@ def create_model():
     output_layer = Conv2D(1, (1,1), padding="same", activation="sigmoid")(final_decoder) #(None, 400, 400, 1)
     
     model = Model(input, output_layer)
-    model.name = 'u-xception'
+    model.name = 'u_xception'
 
     return model
