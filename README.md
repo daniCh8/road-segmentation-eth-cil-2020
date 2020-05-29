@@ -6,7 +6,7 @@
 - ### Gianluca Lain ([@OsD977](https://github.com/OsD977))<br>gianluca.lain97@gmail.com
 
 ## Project Description
-The goal of the project is to create a model able to detect and extract road networks from aerial images. We tried many different networks, and then built an ensemble of the most accurate ones. Here is a sample prediction of our ensemble:
+The goal of the project is to create a model able to detect and extract road networks from aerial images. We tried many different networks, and then built an ensemble of the most accurate ones. Here there is a sample prediction of our ensemble:
 
 ![sample_prediction](https://i.postimg.cc/dt55wPQS/cropped-sample-prediction.png)
 
@@ -33,7 +33,7 @@ It's the same architecture of the network above, but instead of being processed 
 It's a deep U-Net that does not use any pretrained net as encoder, but only residual blocks.
 
 ### [D-UNet](/src/nets/dunet.py)
-It's a dimension fusion U-Net, that processed the input both in 4D and 3D, before mixing all together.
+It's a dimension fusion U-Net, that process the input both in 4D and 3D, before mixing all together.
 
 ## Usage
 All the modules are python files, whereas the main files are Jupyter Notebooks. Any single network can be trained and evaluated through [single_model_trainer.ipynb](/src/single_model_trainer.ipynb). Note that Jupyter Notebooks are useful to visualize data, but the training and checkpointing process is actually all handled by [model.py](/src/model.py), that contains the class `NNet`:
@@ -68,9 +68,9 @@ Finally, the submission `csv` file is created with the parameter  `treshold = .4
 Note that the test images have a shape of  `608*608*3`, whereas the training images are  `400*400*3`. In order to make the predictions, we cut the test images in four squares of  size `400*400*3`, and then recomposed the full prediction merging those blocks, averaging the pixels in common. This is done in the function  `merge prediction`, which can be found in the [utils](/src/utils.py) module.
 
 ## Train and Predict in a single run
-We updated a single notebook that can be ran in order to train the whole ensemble from scratch [here](/src/all_in_one_predictor.ipynb). Note that you will still need the Google Maps API data, that we can't update for copyright reasons. Running all the cells generates a new submission. All the parameters can be tuned in this [config](/src/config.py) file:
+We uploaded a single notebook that can be run in order to train the whole ensemble from scratch [here](/src/all_in_one_predictor.ipynb). Note that you will still need the Google Maps API data, that we can't upload for copyright reasons. Running all the cells generates a new submission. All the parameters can be tuned in this [config](/src/config.py) file:
 
-- `loss` controls which loss will be used to train the single networks. Available losses are [dice](https://arxiv.org/abs/1911.02855) and [binary_cross_entropy](https://en.wikipedia.org/wiki/Cross_entropy).
+- `loss` controls which loss function will be used to train the single networks. Available loss functions are [dice loss](https://arxiv.org/abs/1911.02855) and [binary_cross_entropy](https://en.wikipedia.org/wiki/Cross_entropy).
 - `net_types` sets which nets will be used in the network. It must be a subset of: `['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet']`.
 - `additional_epochs` sets the number of epochs that the network will train on the additional Google Maps API data.
 - `competition_epochs` sets the number of epochs that the network will train on the competition data.
