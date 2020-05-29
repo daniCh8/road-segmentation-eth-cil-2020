@@ -90,6 +90,6 @@ def create_model():
     output_ = Conv2D(1, (1,1), padding="same", activation="sigmoid")(final_decoder) #(None, 400, 400, 1)
     
     model = Model(inputs=input_, outputs=output_)
-    model.name = 'u-xception-res'
+    model.name = 'ures_xception'
 
     return model
