@@ -66,3 +66,20 @@ After training all the models, a mean ensemble of their predictions has been cre
 Finally, the submission `csv` file is created with the parameter  `treshold = .4`.
 
 Note that the test images have a shape of  `608*608*3`, whereas the training images are  `400*400*3`. In order to make the predictions, we cut the test images in four squares of  size `400*400*3`, and then recomposed the full prediction merging those blocks, averaging the pixels in common. This is done in the function  `merge prediction`, which can be found in the [utils](/src/utils.py) module.
+
+## Train and Predict in a single run
+We updated a single notebook that can be ran in order to train the whole ensemble from scratch [here](/src/all_in_one_predictor.ipynb). Note that you will still need the Google Maps API data, that we can't update for copyright reasons. Running all the cells generates a new submission. All the parameters can be tuned in this [config](/src/config.py) file:
+
+- `loss` controls which loss will be used to train the single networks. Available losses are [dice](https://arxiv.org/abs/1911.02855) and [binary_cross_entropy](https://en.wikipedia.org/wiki/Cross_entropy).
+- `net_types` sets which nets will be used in the network. It must be a subset of: `['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet']`.
+- `additional_epochs` sets the number of epochs that the network will train on the additional Google Maps API data.
+- `competition_epochs` sets the number of epochs that the network will train on the competition data.
+- `learning_rate_additional_data` sets the learning rate that will be used during the training on the additional Google Maps API data.
+- `learning_rate_competition_data` sets the learning rate that will be used during the training on the competition data.
+- `treshold` sets the treshold that will be used to compute the final submission on 16*16 batches.
+- `batch_size` controls the batch_size that will be used during the training. There's a different one for each net, in order to be able to reduce the batch size of the bigger networks and not run into a `ResourceExhausted` failure.
+- `model_id` saves the id of the network, so that every run will be saved in a different path.
+- `submission_path` controls where the submission file will be stored.
+- `checkpoint_root` controls where the single networks checkpoint files will be stored.
+
+A json dump of the configurations for every run will also be stored in the submission directory, so that every run is bind with its parameters.
