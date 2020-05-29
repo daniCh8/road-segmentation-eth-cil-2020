@@ -82,4 +82,50 @@ We updated a single notebook that can be ran in order to train the whole ensembl
 - `submission_path` controls where the submission file will be stored.
 - `checkpoint_root` controls where the single networks checkpoint files will be stored.
 
-A json dump of the configurations for every run will also be stored in the submission directory, so that every run is bind with its parameters.
+A json dump of the configurations for every run will also be stored in the submission directory, so that every run is bind with its parameters. Below is an example of `config` file, in json syntax (dumped from a project run).
+
+```javascript
+{
+	"net_types": ["u_xception", "ures_xception", "uspp_xception", "u_resnet50v2", "ures_resnet50v2", "uspp_resnet50v2"],
+	"additional_epochs": 30,
+	"competition_epochs": 60,
+	"loss": "dice",
+	"learning_rate_additional_data": 0.0001,
+	"learning_rate_competition_data": 1e-05,
+	"treshold": 0.4,
+	"model_id": "29-05-2020,14-06",
+	"submission_root": "../submissions/submission_29-05-2020,14-06/",
+	"submission_path": "../submissions/submission_29-05-2020,14-06/submission.csv",
+	"checkpoint_root": "../submissions/submission_29-05-2020,14-06/checkpoints/",
+	"u_xception":
+	{
+		"batch_size": 8,
+		"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/u_xception_checkpoint.h5"
+	},
+	"ures_xception":
+	{
+		"batch_size": 6,
+		"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/ures_xception_checkpoint.h5"
+	},
+	"uspp_xception":
+	{
+		"batch_size": 8,
+		"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/uspp_xception_checkpoint.h5"
+	},
+	"u_resnet50v2":
+	{
+		"batch_size": 8,
+		"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/u_resnet50v2_checkpoint.h5"
+	},
+	"ures_resnet50v2":
+	{
+		"batch_size": 8,
+		"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/ures_resnet50v2_checkpoint.h5"
+	},
+	"uspp_resnet50v2":
+	{
+		"batch_size": 8,
+		"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/uspp_resnet50v2_checkpoint.h5"
+	}
+}
+```
