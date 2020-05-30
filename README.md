@@ -80,7 +80,8 @@ We uploaded a single notebook that can be run in order to train the whole ensemb
 - `batch_size` controls the batch_size that will be used during the training. There's a different one for each net, in order to be able to reduce the batch size of the bigger networks and not run into a `ResourceExhausted` failure.
 - `model_id` saves the id of the network, so that every run will be saved in a different path.
 - `submission_path` controls where the submission file will be stored.
-- `checkpoint_root` controls where the single networks checkpoint files will be stored.
+- `checkpoint_root` controls where the single networks weight checkpoint files will be stored.
+- `predictions_path` controls where the single model predictions to be averaged will be stored.
 
 A json dump of the configurations for every run will also be stored in the submission directory, so that every run is bind with its parameters. Below is an example of `config` file, in json syntax (dumped from a project run).
 
@@ -93,39 +94,46 @@ A json dump of the configurations for every run will also be stored in the submi
   "learning_rate_additional_data": 0.0001,
   "learning_rate_competition_data": 1e-05,
   "treshold": 0.4,
-  "model_id": "29-05-2020,14-06",
-  "submission_root": "../submissions/submission_29-05-2020,14-06/",
-  "submission_path": "../submissions/submission_29-05-2020,14-06/submission.csv",
-  "checkpoint_root": "../submissions/submission_29-05-2020,14-06/checkpoints/",
-  "u_xception":
+  "model_id": "submission_30-05-2020,08-11",
+  "submission_root": "../submissions/submission_30-05-2020,08-11/",
+  "submission_path": "../submissions/submission_30-05-2020,08-11/submission.csv",
+  "checkpoint_root": "../submissions/submission_30-05-2020,08-11/checkpoints/",
+  "prediction_root": "../submissions/submission_30-05-2020,08-11/predictions/"
+  "u_xception": 
   {
 	"batch_size": 8,
-	"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/u_xception_checkpoint.h5"
+	"checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/u_xception_weights.npy",
+	"predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/u_xception_predictions.npy"
   },
   "ures_xception":
   {
 	"batch_size": 6,
-	"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/ures_xception_checkpoint.h5"
+	"checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/ures_xception_weights.npy",
+	"predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/ures_xception_predictions.npy"
   },
   "uspp_xception":
   {
-	"batch_size": 8,
-	"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/uspp_xception_checkpoint.h5"
+	"batch_size": 6,
+	"checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/uspp_xception_weights.npy",
+	"predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/uspp_xception_predictions.npy"
   },
   "u_resnet50v2":
   {
 	"batch_size": 8,
-	"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/u_resnet50v2_checkpoint.h5"
+	"checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/u_resnet50v2_weights.npy",
+	"predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/u_resnet50v2_predictions.npy"
   },
   "ures_resnet50v2":
   {
-	"batch_size": 8,
-	"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/ures_resnet50v2_checkpoint.h5"
+	"batch_size": 6,
+	"checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/ures_resnet50v2_weights.npy",
+	"predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/ures_resnet50v2_predictions.npy"
   },
   "uspp_resnet50v2":
   {
-	"batch_size": 8,
-	"checkpoint": "../submissions/submission_29-05-2020,14-06/checkpoints/uspp_resnet50v2_checkpoint.h5"
+	"batch_size": 4,
+	"checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/uspp_resnet50v2_weights.npy",
+	"predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/uspp_resnet50v2_predictions.npy"
   }
 }
 ```
