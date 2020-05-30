@@ -38,9 +38,11 @@ It's a dimension fusion U-Net, that process the input both in 4D and 3D, before 
 ## Usage
 All the modules are python files, whereas the main files are Jupyter Notebooks. Any single network can be trained and evaluated through [single_model_trainer.ipynb](/src/single_model_trainer.ipynb). Note that Jupyter Notebooks are useful to visualize data, but the training and checkpointing process is actually all handled by [model.py](/src/model.py), that contains the class `NNet`:
 
-	__init__(self, val_split=.0, model_to_load='None', net_type='uxception')
+```python
+	__init__(self, val_split=.0, model_to_load='None', net_type='u_xception', load_weights='None')
+```
 
-`model_to_load` can be used to load any pretrained model. If it's `'None'`, a new network of type `net_type` will be created.
+`model_to_load` can be used to load any pretrained model. If it's `'None'`, a new network of type `net_type` will be created. In such case, `load_weights` can be used to recover the weights of a trained model. Obviously, if `load_weights` is not `'None'`, the weights must be coherent with the `net_type` created.
 
 After training all the models of interest, an ensemble of them can be created through [ensemble_predictions.ipynb](/src/ensemble_predictions.ipynb).
 
@@ -137,3 +139,5 @@ A json dump of the configurations for every run will also be stored in the submi
   }
 }
 ```
+
+Note that the models checkpoints are stored as numpy files. Indeed, we're not actually storing `keras`' checkpoints, but the weights of the networks. This is done to speed-up both the saving and the loading model phases. A model saved this way can be loaded by creating a new `NNet` class, with parameters `net_type` equals to the type of network we want to load and `load_weights` equals to the path where the weights file of such model are stored.
