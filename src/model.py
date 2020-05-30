@@ -55,7 +55,7 @@ def soft_dice_loss(y_true, y_pred):
     return 1-dice_coef(y_true, y_pred)
 
 class NNet:
-    def __init__(self, val_split=.0, model_to_load='None', net_type='u_xception'):
+    def __init__(self, val_split=.0, model_to_load='None', net_type='u_xception', load_weights='None'):
         assert net_type in ['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet'], "net_type must be one of ['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet']"
         self.net_type = net_type
         if model_to_load == 'None':
@@ -75,8 +75,13 @@ class NNet:
                 self.model = uspp_resnet50v2_net()
             elif net_type == 'dunet':
                 self.model = du_net()
-            
+                
             print('created model: {}'.format(self.model.name))
+            
+            if load_weights != 'None':
+                weights = np.load(load_weights, allow_pickle=True)
+                self.model.set_weights(weights)
+                print('loaded weights: {}'.format(load_weights))
         else:
             self.model = load_model(model_to_load, custom_objects= {'soft_dice_loss':soft_dice_loss, 'dice_coef':dice_coef, 'iou_coef':iou_coef})
             print('loaded model: {}'.format(model_to_load))
@@ -139,8 +144,9 @@ class NNet:
         
     def save_model(self, path=None):
         if path == None:
-            path = "model-{}.h5".format(self.net_type)
-        self.model.save(path, overwrite=True, include_optimizer=False)
+            path = "model-{}.npy".format(self.net_type)
+        weights = self.model.get_weights()
+        np.save(path, weights)
     
     def predict_test_data(self):
         predictions = self.model.predict(self.preprocessed_test_images)
