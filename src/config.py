@@ -17,8 +17,10 @@ timestamp = now.strftime("%d-%m-%Y,%H-%M")
 config['model_id'] = timestamp
 config['submission_root'] = '../submissions/submission_{}/'.format(config['model_id'])
 config['submission_path'] = config['submission_root'] + 'submission.csv'
+config['figures_path'] = config['submission_root'] + 'predictions.png'
 config['checkpoint_root'] = config['submission_root'] + 'checkpoints/'
 config['prediction_root'] = config['submission_root'] + 'predictions/'
+config['final_predictions_path'] = config['prediction_root'] + '{}_predictions.npy'.format('final_ensemble')
 os.makedirs(config['checkpoint_root'], exist_ok=True)
 os.makedirs(config['prediction_root'], exist_ok=True)
 
@@ -29,6 +31,7 @@ for net_type in config['net_types']:
     config[net_type]['predictions_path'] = config['prediction_root'] + '{}_predictions.npy'.format(net_type)
 
 config['u_xception']['batch_size'] = 8
+config['ures_xception']['batch_size'] = 4
 config['u_resnet50v2']['batch_size'] = 8
 config['uspp_resnet50v2']['batch_size'] = 4
     
