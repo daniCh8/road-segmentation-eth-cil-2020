@@ -58,6 +58,7 @@ class NNet:
     def __init__(self, val_split=.0, model_to_load='None', net_type='u_xception', load_weights='None'):
         assert net_type in ['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet'], "net_type must be one of ['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet']"
         self.net_type = net_type
+        print('creating model: {}'.format(net_type))
         if model_to_load == 'None':
             if net_type == 'u_xception':
                 self.model = u_xception_net()
@@ -153,8 +154,8 @@ class NNet:
         self.test_images_predictions = merge_predictions(predictions.reshape(-1, 400, 400,), mode='max')
         return self.test_images_predictions
     
-    def display_test_predictions(self, submission_path, samples_number=5):
-        plt.figure(figsize= (15, 15))
+    def display_test_predictions(self, submission_path, samples_number=5, figure_size=(15, 15)):
+        plt.figure(figsize=figure_size)
         display_predictions(self.test_images, self.test_images_predictions, submission_outputs=submission_outputs(submission_path, self.test_data_gen.numbers), samples=samples_number)
     
     def create_submission_file(self, path='submission.csv', treshold=.25):
