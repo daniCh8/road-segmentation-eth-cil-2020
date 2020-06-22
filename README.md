@@ -1,6 +1,6 @@
 # [Computational Intelligence Lab](http://www.vvz.ethz.ch/Vorlesungsverzeichnis/lerneinheit.view?lang=en&lerneinheitId=135225&semkez=2020S&ansicht=KATALOGDATEN&) 2020, Course Project
 
-## Table of Contents
+**Shortcuts**:
 
 - [Team](#team)
 - [Project Description](#project-description)
