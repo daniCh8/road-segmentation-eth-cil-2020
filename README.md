@@ -10,13 +10,16 @@ The goal of the project is to create a model able to detect and extract road net
 
 ![sample_prediction](https://i.postimg.cc/dt55wPQS/cropped-sample-prediction.png)
 
+The final outputs of our network on test data can be found [here](/predictions.pdf).
+
 ## Network Types
 All the networks used for the final ensemble (the first six below) are based on the same architecture. Here is a scheme of such architecture:
 
 ![net_architecture](https://i.ibb.co/bKZK4nH/net-ushape-w-legend-18.png)
 
-As shown by the graph, the skeleton is basically a U-Net that uses a pre-trained model on the encoder part. What vary between our different networks are such pre-trained model and the decoder/encoder blocks used to process the intermediate outputs.
-We use two types of blocks: [Spatial Pyramid Pooling blocks](https://arxiv.org/abs/1406.4729) and [Residual Blocks](https://arxiv.org/abs/1512.03385). Below is a sketch of them.
+As shown by the graph, the skeleton is basically a U-Net that uses a pre-trained model on the encoder part. What vary between our different networks are such pre-trained models and the decoder/encoder blocks used to process the intermediate outputs.
+
+We used two types of blocks: [Spatial Pyramid Pooling blocks](https://arxiv.org/abs/1406.4729) and [Residual blocks](https://arxiv.org/abs/1512.03385). Below is a sketch of them.
 
 ![blocks](https://i.ibb.co/TLY2xzw/blocks-legend-v4.png)
 
