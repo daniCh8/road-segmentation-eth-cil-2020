@@ -1,8 +1,22 @@
 # [Computational Intelligence Lab](http://www.vvz.ethz.ch/Vorlesungsverzeichnis/lerneinheit.view?lang=en&lerneinheitId=135225&semkez=2020S&ansicht=KATALOGDATEN&) 2020, Course Project
 
-**Table of Contents:**
+## Table of Contents
 
-[TOC]
+- [Team](#team)
+- [Project Description](#project-description)
+- [Network Types](#network-types)
+  - [[U-Xception Net](/src/nets/u_xception.py)](#u-xception-netsrcnetsuxceptionpy)
+  - [[URES-Xception](/src/nets/ures_xception.py)](#ures-xceptionsrcnetsuresxceptionpy)
+  - [[USPP-Xception](/src/nets/uspp_xception.py)](#uspp-xceptionsrcnetsusppxceptionpy)
+  - [[U-ResNet50V2 Net](/src/nets/u_resnet50v2.py)](#u-resnet50v2-netsrcnetsuresnet50v2py)
+  - [[URES-ResNet50V2 Net](/src/nets/ures_resnet50v2.py)](#ures-resnet50v2-netsrcnetsuresresnet50v2py)
+  - [[USPP-ResNet50V2 Net](/src/nets/uspp_resnet50v2.py)](#uspp-resnet50v2-netsrcnetsusppresnet50v2py)
+  - [[DeepRes-UNet](/src/nets/deepresunet.py)](#deepres-unetsrcnetsdeepresunetpy)
+  - [[D-UNet](/src/nets/dunet.py)](#d-unetsrcnetsdunetpy)
+- [Usage](#usage)
+- [Additional Data](#additional-data)
+- [Final Prediction](#final-prediction)
+- [Train and Predict in a single run](#train-and-predict-in-a-single-run)
 
 ## Team 
 -  **Daniele Chiappalupi** ([@daniCh8](https://github.com/daniCh8))<br>dchiappal@student.ethz.ch
