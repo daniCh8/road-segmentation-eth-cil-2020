@@ -1,9 +1,14 @@
 # [Computational Intelligence Lab](http://www.vvz.ethz.ch/Vorlesungsverzeichnis/lerneinheit.view?lang=en&lerneinheitId=135225&semkez=2020S&ansicht=KATALOGDATEN&) 2020, Course Project
+
+**Table of Contents:**
+
+[TOC]
+
 ## Team 
-- ### Daniele Chiappalupi ([@daniCh8](https://github.com/daniCh8))<br>dchiappal@student.ethz.ch
-- ### Elena Iannucci ([@eleiannu](https://github.com/eleiannu))<br>eiannucci@student.ethz.ch
-- ### Samuele Piazzetta ([@piaz97](https://github.com/piaz97))<br>samuele.piazzetta@gmail.com
-- ### Gianluca Lain ([@OsD977](https://github.com/OsD977))<br>gianluca.lain97@gmail.com
+-  **Daniele Chiappalupi** ([@daniCh8](https://github.com/daniCh8))<br>dchiappal@student.ethz.ch
+-  **Elena Iannucci** ([@eleiannu](https://github.com/eleiannu))<br>eiannucci@student.ethz.ch
+- **Samuele Piazzetta** ([@piaz97](https://github.com/piaz97))<br>samuele.piazzetta@gmail.com
+- **Gianluca Lain** ([@OsD977](https://github.com/OsD977))<br>gianluca.lain97@gmail.com
 
 ## Project Description
 The goal of the project is to create a model able to detect and extract road networks from aerial images. We tried many different networks, and then built an ensemble of the most accurate ones. Here there is a sample prediction of our ensemble:
@@ -53,7 +58,7 @@ It's a dimension fusion U-Net, that process the input both in 4D and 3D, before 
 All the modules are python files, whereas the main files are Jupyter Notebooks. Any single network can be trained and evaluated through [single_model_trainer.ipynb](/src/single_model_trainer.ipynb). Note that Jupyter Notebooks are useful to visualize data, but the training and checkpointing process is actually all handled by [model.py](/src/model.py), that contains the class `NNet`:
 
 ```python
-	__init__(self, val_split=.0, model_to_load='None', net_type='u_xception', load_weights='None')
+  __init__(self, val_split=.0, model_to_load='None', net_type='u_xception', load_weights='None')
 ```
 
 `model_to_load` can be used to load any pretrained model. If it's `'None'`, a new network of type `net_type` will be created. In such case, `load_weights` can be used to recover the weights of a trained model. Obviously, if `load_weights` is not `'None'`, the weights must be coherent with the `net_type` created.
@@ -117,39 +122,39 @@ A json dump of the configurations for every run will also be stored in the submi
   "prediction_root": "../submissions/submission_30-05-2020,08-11/predictions/"
   "u_xception": 
   {
-	"batch_size": 8,
-	"checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/u_xception_weights.npy",
-	"predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/u_xception_predictions.npy"
+  "batch_size": 8,
+  "checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/u_xception_weights.npy",
+  "predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/u_xception_predictions.npy"
   },
   "ures_xception":
   {
-	"batch_size": 6,
-	"checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/ures_xception_weights.npy",
-	"predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/ures_xception_predictions.npy"
+  "batch_size": 6,
+  "checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/ures_xception_weights.npy",
+  "predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/ures_xception_predictions.npy"
   },
   "uspp_xception":
   {
-	"batch_size": 6,
-	"checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/uspp_xception_weights.npy",
-	"predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/uspp_xception_predictions.npy"
+  "batch_size": 6,
+  "checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/uspp_xception_weights.npy",
+  "predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/uspp_xception_predictions.npy"
   },
   "u_resnet50v2":
   {
-	"batch_size": 8,
-	"checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/u_resnet50v2_weights.npy",
-	"predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/u_resnet50v2_predictions.npy"
+  "batch_size": 8,
+  "checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/u_resnet50v2_weights.npy",
+  "predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/u_resnet50v2_predictions.npy"
   },
   "ures_resnet50v2":
   {
-	"batch_size": 6,
-	"checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/ures_resnet50v2_weights.npy",
-	"predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/ures_resnet50v2_predictions.npy"
+  "batch_size": 6,
+  "checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/ures_resnet50v2_weights.npy",
+  "predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/ures_resnet50v2_predictions.npy"
   },
   "uspp_resnet50v2":
   {
-	"batch_size": 4,
-	"checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/uspp_resnet50v2_weights.npy",
-	"predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/uspp_resnet50v2_predictions.npy"
+  "batch_size": 4,
+  "checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/uspp_resnet50v2_weights.npy",
+  "predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/uspp_resnet50v2_predictions.npy"
   }
 }
 ```
