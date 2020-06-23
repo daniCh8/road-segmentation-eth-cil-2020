@@ -118,7 +118,7 @@ We uploaded a single notebook that can be run in order to train the whole ensemb
 
 A json dump of the configurations for every run will also be stored in the submission directory, so that every run is bind with its parameters. Below is an example of `config` file, in json syntax (dumped from a project run).
 
-```javascript
+```ruby
 {
    "net_types":[
       "u_xception",
