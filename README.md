@@ -118,56 +118,57 @@ We uploaded a single notebook that can be run in order to train the whole ensemb
 
 A json dump of the configurations for every run will also be stored in the submission directory, so that every run is bind with its parameters. Below is an example of `config` file, in json syntax (dumped from a project run).
 
-```sh
+```javascript
 {
-  "net_types": ["u_xception", "ures_xception", "uspp_xception", "u_resnet50v2", "ures_resnet50v2", "uspp_resnet50v2"],
-  "additional_epochs": 30,
-  "competition_epochs": 60,
-  "loss": "dice",
-  "learning_rate_additional_data": 0.0001,
-  "learning_rate_competition_data": 1e-05,
-  "treshold": 0.4,
-  "model_id": "submission_30-05-2020,08-11",
-  "submission_root": "../submissions/submission_30-05-2020,08-11/",
-  "submission_path": "../submissions/submission_30-05-2020,08-11/submission.csv",
-  "checkpoint_root": "../submissions/submission_30-05-2020,08-11/checkpoints/",
-  "prediction_root": "../submissions/submission_30-05-2020,08-11/predictions/"
-  "u_xception": 
-  {
-  "batch_size": 8,
-  "checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/u_xception_weights.npy",
-  "predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/u_xception_predictions.npy"
-  },
-  "ures_xception":
-  {
-  "batch_size": 6,
-  "checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/ures_xception_weights.npy",
-  "predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/ures_xception_predictions.npy"
-  },
-  "uspp_xception":
-  {
-  "batch_size": 6,
-  "checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/uspp_xception_weights.npy",
-  "predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/uspp_xception_predictions.npy"
-  },
-  "u_resnet50v2":
-  {
-  "batch_size": 8,
-  "checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/u_resnet50v2_weights.npy",
-  "predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/u_resnet50v2_predictions.npy"
-  },
-  "ures_resnet50v2":
-  {
-  "batch_size": 6,
-  "checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/ures_resnet50v2_weights.npy",
-  "predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/ures_resnet50v2_predictions.npy"
-  },
-  "uspp_resnet50v2":
-  {
-  "batch_size": 4,
-  "checkpoint": "../submissions/submission_30-05-2020,08-11/checkpoints/uspp_resnet50v2_weights.npy",
-  "predictions_path": "../submissions/submission_30-05-2020,08-11/predictions/uspp_resnet50v2_predictions.npy"
-  }
+   "net_types":[
+      "u_xception",
+      "ures_xception",
+      "uspp_xception",
+      "u_resnet50v2",
+      "ures_resnet50v2",
+      "uspp_resnet50v2"
+   ],
+   "additional_epochs":30,
+   "competition_epochs":60,
+   "loss":"dice",
+   "learning_rate_additional_data":0.0001,
+   "learning_rate_competition_data":1e-05,
+   "treshold":0.4,
+   "model_id":"submission_30-05-2020,08-11",
+   "submission_root":"../submissions/submission_30-05-2020,08-11/",
+   "submission_path":"../submissions/submission_30-05-2020,08-11/submission.csv",
+   "checkpoint_root":"../submissions/submission_30-05-2020,08-11/checkpoints/",
+   "prediction_root":"../submissions/submission_30-05-2020,08-11/predictions/",
+   "u_xception":{
+      "batch_size":8,
+      "checkpoint":"../submissions/submission_30-05-2020,08-11/checkpoints/u_xception_weights.npy",
+      "predictions_path":"../submissions/submission_30-05-2020,08-11/predictions/u_xception_predictions.npy"
+   },
+   "ures_xception":{
+      "batch_size":6,
+      "checkpoint":"../submissions/submission_30-05-2020,08-11/checkpoints/ures_xception_weights.npy",
+      "predictions_path":"../submissions/submission_30-05-2020,08-11/predictions/ures_xception_predictions.npy"
+   },
+   "uspp_xception":{
+      "batch_size":6,
+      "checkpoint":"../submissions/submission_30-05-2020,08-11/checkpoints/uspp_xception_weights.npy",
+      "predictions_path":"../submissions/submission_30-05-2020,08-11/predictions/uspp_xception_predictions.npy"
+   },
+   "u_resnet50v2":{
+      "batch_size":8,
+      "checkpoint":"../submissions/submission_30-05-2020,08-11/checkpoints/u_resnet50v2_weights.npy",
+      "predictions_path":"../submissions/submission_30-05-2020,08-11/predictions/u_resnet50v2_predictions.npy"
+   },
+   "ures_resnet50v2":{
+      "batch_size":6,
+      "checkpoint":"../submissions/submission_30-05-2020,08-11/checkpoints/ures_resnet50v2_weights.npy",
+      "predictions_path":"../submissions/submission_30-05-2020,08-11/predictions/ures_resnet50v2_predictions.npy"
+   },
+   "uspp_resnet50v2":{
+      "batch_size":4,
+      "checkpoint":"../submissions/submission_30-05-2020,08-11/checkpoints/uspp_resnet50v2_weights.npy",
+      "predictions_path":"../submissions/submission_30-05-2020,08-11/predictions/uspp_resnet50v2_predictions.npy"
+   }
 }
 ```
 
