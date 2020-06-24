@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 def display_predictions(training_images, preds, training_truths=[], submission_outputs=[], samples=5):
     training_images = np.array(training_images)
     preds = np.array(preds)
