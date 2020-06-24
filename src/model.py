@@ -34,9 +34,11 @@ def create_callbacks(loss='bce', checkpoint_path='../checkpoints/model_checkpoin
         to_monitor = monitor_prefix+'dice_coef'
     reduce_lr = ReduceLROnPlateau(monitor=to_monitor, patience=3, mode='max', factor=0.5)
     early_stop = EarlyStopping(monitor=to_monitor, mode='max', patience=10)
-    #checkpoint = ModelCheckpoint(checkpoint_path, monitor=to_monitor, mode='max', save_best_only=True) #checkpoints usually slow down the process
+    # checkpoint = ModelCheckpoint(checkpoint_path, monitor=to_monitor, mode='max', save_best_only=True)
+    # checkpoints usually slow down the process
 
-    return [reduce_lr, early_stop]#, checkpoint]
+    return [reduce_lr, early_stop]  # , checkpoint]
+
 
 def iou_coef(y_true, y_pred, smooth=1):
     intersection = K.sum(K.abs(y_true * y_pred), axis=[1,2,3])
@@ -45,17 +47,20 @@ def iou_coef(y_true, y_pred, smooth=1):
 
     return iou
 
+
 def dice_coef(y_true, y_pred, smooth = 1):
     y_true_f = K.flatten(y_true)
     y_pred_f = K.flatten(y_pred)
     intersection = K.sum(y_true_f * y_pred_f)
     return (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
 
+
 def soft_dice_loss(y_true, y_pred):
     return 1-dice_coef(y_true, y_pred)
 
+
 class NNet:
-    def __init__(self, val_split=.0, model_to_load='None', net_type='u_xception', load_weights='None'):
+    def __init__(self, val_split=.0, model_to_load='None', net_type='u_xception', load_weights='None', data_paths=None):
         assert net_type in ['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet'], "net_type must be one of ['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet']"
         self.net_type = net_type
         print('creating model: {}'.format(net_type))
@@ -84,23 +89,35 @@ class NNet:
                 self.model.set_weights(weights)
                 print('loaded weights: {}'.format(load_weights))
         else:
-            self.model = load_model(model_to_load, custom_objects= {'soft_dice_loss':soft_dice_loss, 'dice_coef':dice_coef, 'iou_coef':iou_coef})
+            self.model = load_model(model_to_load, custom_objects={'soft_dice_loss': soft_dice_loss,
+                                                                    'dice_coef': dice_coef,
+                                                                    'iou_coef': iou_coef})
             print('loaded model: {}'.format(model_to_load))
             print('model name: {}'.format(self.model.name))
             
         self.data = None
         self.valid_set = None
         self.val_split = val_split
-        self.load_data(val_split=val_split)
-        
-        self.test_data_gen = TestData()
+        self.load_data(val_split=val_split, paths=data_paths)
+
+        if data_paths is None:
+            self.test_data_gen = TestData()
+        else:
+            self.test_data_gen = TestData(data_paths['test_data_path'])
         self.test_images = self.test_data_gen.get_test_data()
         self.preprocessed_test_images = preprocess_test_images(self.test_images)/255
         self.test_images_predictions = None
     
-    def load_data(self, val_split=.0):
+    def load_data(self, val_split=.0, paths=None):
         self.val_split = val_split
-        self.data = DataGenerator(val_split=val_split)
+        if paths is None:
+            self.data = DataGenerator(val_split=val_split)
+        else:
+            self.data = DataGenerator(val_split=val_split,
+                                      image_path=paths['image_path'],
+                                      groundtruth_path=paths['groundtruth_path'],
+                                      additional_images_path=paths['additional_images_path'],
+                                      additional_masks_path=paths['additional_masks_path'])
         if self.val_split != .0:
             self.valid_set = self.data.return_validation_set()
         else:
@@ -120,17 +137,26 @@ class NNet:
             steps = len(self.data.images) // batch_size
         
             if self.val_split != .0:
-                self.model.fit_generator(generator=self.data.generator(batch_size), validation_data=self.valid_set, epochs=epochs, steps_per_epoch=steps, callbacks=create_callbacks(loss, with_val=True))
+                self.model.fit_generator(generator=self.data.generator(batch_size),
+                                         validation_data=self.valid_set,
+                                         epochs=epochs, steps_per_epoch=steps,
+                                         callbacks=create_callbacks(loss, with_val=True))
             else:
-                self.model.fit_generator(generator=self.data.generator(batch_size), epochs=epochs, steps_per_epoch=steps, callbacks=create_callbacks(loss))
+                self.model.fit_generator(generator=self.data.generator(batch_size),
+                                         epochs=epochs,
+                                         steps_per_epoch=steps,
+                                         callbacks=create_callbacks(loss))
                 
         else:
             steps = len(self.data.additional_images) // batch_size
-            #val_data = (np.array(self.data.images)/255, np.round(np.expand_dims(np.array(self.data.truths), -1)/255))
-            self.model.fit_generator(generator=self.data.additional_generator(batch_size), epochs=epochs, steps_per_epoch=steps, callbacks=create_callbacks(loss))
+            # val_data = (np.array(self.data.images)/255, np.round(np.expand_dims(np.array(self.data.truths), -1)/255))
+            self.model.fit_generator(generator=self.data.additional_generator(batch_size),
+                                     epochs=epochs,
+                                     steps_per_epoch=steps,
+                                     callbacks=create_callbacks(loss))
         
     def check_outputs(self):
-        plt.figure(figsize= (15, 15))
+        plt.figure(figsize=(15, 15))
         gen = self.data.generator(30)
         batch = next(gen)
     
@@ -144,7 +170,7 @@ class NNet:
         print(accuracy_score(groundtruths, predictions_labs))
         
     def save_model(self, path=None):
-        if path == None:
+        if path is None:
             path = "model-{}.npy".format(self.net_type)
         weights = self.model.get_weights()
         np.save(path, weights)
@@ -156,7 +182,10 @@ class NNet:
     
     def display_test_predictions(self, submission_path, samples_number=5, figure_size=(15, 15)):
         plt.figure(figsize=figure_size)
-        display_predictions(self.test_images, self.test_images_predictions, submission_outputs=submission_outputs(submission_path, self.test_data_gen.numbers), samples=samples_number)
+        display_predictions(self.test_images,
+                            self.test_images_predictions,
+                            submission_outputs=submission_outputs(submission_path, self.test_data_gen.numbers),
+                            samples=samples_number)
     
     def create_submission_file(self, path='submission.csv', treshold=.25):
         labelizer = Labelizer(treshold)
