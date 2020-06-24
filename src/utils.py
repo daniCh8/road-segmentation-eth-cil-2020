@@ -1,9 +1,6 @@
-import os
-import sys
-from PIL import Image
 import math
-import matplotlib.image as mpimg
 import numpy as np
+
 
 def split_picture(test_picture):
     split_1 = test_picture[:400, :400]
@@ -11,6 +8,7 @@ def split_picture(test_picture):
     split_3 = test_picture[-400:, :400]
     split_4 = test_picture[-400:, -400:]
     return [split_1, split_2, split_3, split_4]
+
 
 def merge_splits(split_1, split_2, split_3, split_4, mode='mean'):
     assert mode in ['mean', 'max'], 'mode can only be one between mean and max!'
@@ -41,6 +39,7 @@ def merge_splits(split_1, split_2, split_3, split_4, mode='mean'):
     final_image = np.concatenate([upper_slice, middle_slice, lower_slice], axis= 0)
     return final_image
 
+
 def preprocess_test_images(test_images):
     preprocessed = []
 
@@ -49,6 +48,7 @@ def preprocess_test_images(test_images):
 
     return np.array(preprocessed)
 
+
 def merge_predictions(predictions, mode='mean'):
     merged = []
 
@@ -56,6 +56,7 @@ def merge_predictions(predictions, mode='mean'):
         merged.append(merge_splits(predictions[i], predictions[i+1], predictions[i+2], predictions[i+3], mode))
 
     return merged
+
 
 def single_model_training(model, save_path, additional_epochs=30, competition_epochs=60, b_size=8, loss='dice', l_rate_a=.0001, l_rate_b=.00001):
     print('Training model {}.\nParameters:'.format(model.net_type))
@@ -68,13 +69,14 @@ def single_model_training(model, save_path, additional_epochs=30, competition_ep
     model.save_model(save_path)
     return
 
-#
-# the code below was rearranged by the code provided by the course's TAs, and it's used to build masks from a submission csv file
-# 
+# the code below was rearranged by the code provided by the course's TAs
+# and it's used to build masks from a submission csv file
+
 
 def binary_to_uint8(img):
     rimg = (img * 255).round().astype(np.uint8)
     return rimg
+
 
 def reconstruct_from_labels(lines, image_id):
     h = 16
@@ -107,6 +109,7 @@ def reconstruct_from_labels(lines, image_id):
         im[j:je, i:ie] = binary_to_uint8(adata)
         
     return im
+
 
 def submission_outputs(label_file, numbers):
     f = open(label_file)

@@ -4,7 +4,12 @@ import json
 
 config = dict()
 
-config['net_types'] = ['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2']
+config['net_types'] = ['u_xception',
+                       'ures_xception',
+                       'uspp_xception',
+                       'u_resnet50v2',
+                       'ures_resnet50v2',
+                       'uspp_resnet50v2']
 config['additional_epochs'] = 40
 config['competition_epochs'] = 60
 config['loss'] = 'dice'
@@ -33,7 +38,7 @@ os.makedirs(config['checkpoint_root'], exist_ok=True)
 os.makedirs(config['prediction_root'], exist_ok=True)
 
 for net_type in config['net_types']:
-    config[net_type] = {} #if you want to tune some specific parameter
+    config[net_type] = {}  # if you want to tune some specific parameter
     config[net_type]['batch_size'] = 6
     config[net_type]['checkpoint'] = config['checkpoint_root'] + '{}_weights.npy'.format(net_type)
     config[net_type]['predictions_path'] = config['prediction_root'] + '{}_predictions.npy'.format(net_type)

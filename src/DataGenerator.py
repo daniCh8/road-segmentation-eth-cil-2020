@@ -1,8 +1,6 @@
-import os
 from skimage.io import imread
 import numpy as np
 from skimage.color import rgb2gray
-import random
 from albumentations import VerticalFlip, HorizontalFlip, RandomRotate90, ElasticTransform, RandomContrast, HueSaturationValue, RandomBrightness
 from tqdm import tqdm
 import os
@@ -14,7 +12,7 @@ class DataGenerator:
         training_images = os.listdir(image_path)
         training_truths = os.listdir(groundtruth_path)
         
-        #shuffling the images so to obtain a random train-test split
+        # shuffling the images so to obtain a random train-test split
         zipped = list(zip(training_images, training_truths))
         random.shuffle(zipped)
         training_images, training_truths = zip(*zipped)
@@ -62,7 +60,7 @@ class DataGenerator:
         albumented_2 = self.albumenters_2[np.random.randint(len(self.albumenters_2))] (image=albumented_1['image'], mask=albumented_1['mask'])
         return albumented_2
     
-    def generator(self, batch_size= 16):
+    def generator(self, batch_size=16):
         while True:
             indices = np.random.choice(len(self.images), batch_size, replace=False)
             batch_x = []

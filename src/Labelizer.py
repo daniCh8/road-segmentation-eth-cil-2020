@@ -1,11 +1,12 @@
 import numpy as np
 
+
 class Labelizer:
     def __init__(self, treshold=.25):
         self.treshold = treshold
         
     def patchize(self, pred, number, patch_size= 16, step= 16):
-        labels  = []
+        labels = []
         numbers = []
         for j in range(0, pred.shape[1], step):
             for i in range(0, pred.shape[0], step):
@@ -14,11 +15,11 @@ class Labelizer:
 
         return labels, numbers
     
-    def make_submission(self, predictions, numbers= None):
+    def make_submission(self, predictions, numbers=None):
         sub_numbers = []
-        sub_labels  = []
+        sub_labels = []
         
-        if(numbers == None):
+        if numbers is None:
             numbers = range(len(predictions))
         
         for pred, number in zip(predictions, numbers):

@@ -1,9 +1,7 @@
 import cv2
 import os
-import functools
-import operator
 import re
-import numpy as np
+
 
 class TestData:
     def __init__(self, image_path= '../../data/test_images/'):
