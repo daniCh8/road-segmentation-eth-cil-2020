@@ -12,6 +12,14 @@ config['learning_rate_additional_data'] = 1e-4
 config['learning_rate_competition_data'] = 1e-5
 config['treshold'] = .4
 
+config['data_paths'] = {}
+config['data_paths']['data_dir'] = '/cluster/home/dchiappal/PochiMaPochi/data/'
+config['data_paths']['image_path'] = config['data_dir'] + 'training/images/'
+config['data_paths']['groundtruth_path'] = config['data_dir'] + 'training/groundtruth/'
+config['data_paths']['additional_images_path'] = config['data_dir'] + 'additional_data/images/'
+config['data_paths']['additional_masks_path'] = config['data_dir'] + 'additional_data/masks/'
+config['data_paths']['test_data_path'] = config['data_dir'] + 'test_images/'
+
 now = datetime.now()
 timestamp = now.strftime("%d-%m-%Y,%H-%M")
 config['model_id'] = timestamp
