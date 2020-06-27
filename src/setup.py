@@ -10,7 +10,6 @@ setup(
 
     python_requires='>=3.5',
     install_requires=[
-            # Add external libraries here.
             'tensorflow-gpu==1.12.0',
             'scikit-image',
             'albumentations',
