@@ -16,7 +16,7 @@ setup(
             'albumentations',
             'tqdm',
             'keras',
-            'cv2',
+            'opencv-python',
             'numpy',
             'matplotlib'
     ]
