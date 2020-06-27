@@ -70,10 +70,10 @@ It's a dimension fusion U-Net, that process the input both in 4D and 3D, before 
 All the modules are python files, whereas the main files are Jupyter Notebooks. Any single network can be trained and evaluated through [single_model_trainer.ipynb](/src/single_model_trainer.ipynb). Note that Jupyter Notebooks are useful to visualize data, but the training and checkpointing process is actually all handled by [model.py](/src/model.py), that contains the class `NNet`:
 
 ```python
-  __init__(self, val_split=.0, model_to_load='None', net_type='u_xception', load_weights='None')
+  __init__(self, val_split=.0, model_to_load='None', net_type='u_xception', load_weights='None', data_paths=None)
 ```
 
-`model_to_load` can be used to load any pretrained model. If it's `'None'`, a new network of type `net_type` will be created. In such case, `load_weights` can be used to recover the weights of a trained model. Obviously, if `load_weights` is not `'None'`, the weights must be coherent with the `net_type` created.
+`model_to_load` can be used to load any pretrained model. If it's `'None'`, a new network of type `net_type` will be created. In such case, `load_weights` can be used to recover the weights of a trained model. Obviously, if `load_weights` is not `'None'`, the weights must be coherent with the `net_type` created. `data_paths` can be used to define custom data paths, otherwise the default relative ones will be used.
 
 After training all the models of interest, an ensemble of them can be created through [ensemble_predictions.ipynb](/src/ensemble_predictions.ipynb).
 
@@ -92,7 +92,7 @@ In order to obtain the predictions, we used a mean ensemble of six models. Those
 - [URES-ResNet50V2](/src/nets/ures_resnet50v2.py)
 - [USPP-ResNet50V2](/src/nets/uspp_resnet50v2.py)
 
-Each model has been first trained for 20 epochs on the additional data with `learning rate = .0001`, and then fine-tuned for 60 epochs on the competition data with `learning rate = .00001`. During both training and fine-tuning all of the aforementioned data augmentation have been used. Moreover, during the `fit` of the networks, both the callbacks *Early Stopping* and *Learning Rate reduction on Plateau* were on. The whole pipeline of fitting can be found [here](/src/single_model_trainer.ipynb).
+Each model has been first trained for 20 epochs on the additional data with `learning rate = .0001`, and then fine-tuned for 60 epochs on the competition data with `learning rate = .00001`. During both training and fine-tuning all of the aforementioned data augmentation have been used. Moreover, during the `fit` of the networks, both the callbacks *Early Stopping* and *Learning Rate reduction on Plateau* were on. The whole pipeline of fitting can be found either in [here](/src/single_model_trainer.ipynb).
 
 After training all the models, a mean ensemble of their predictions has been created [here](/src/ensemble_predictions.ipynb). Note that the averaging is made on the outputs of the neural networks, and not on the final binary submission values.
 
@@ -101,7 +101,7 @@ Finally, the submission `csv` file is created with the parameter  `treshold = .4
 Note that the test images have a shape of  `608*608*3`, whereas the training images are  `400*400*3`. In order to make the predictions, we cut the test images in four squares of  size `400*400*3`, and then recomposed the full prediction merging those blocks, averaging the pixels in common. This is done in the function  `merge prediction`, which can be found in the [utils](/src/utils.py) module.
 
 ## Train and Predict in a single run
-We uploaded a single notebook that can be run in order to train the whole ensemble from scratch [here](/src/all_in_one_predictor.ipynb). Note that you will still need the Google Maps API data, that we can't upload for copyright reasons. Running all the cells generates a new submission. All the parameters can be tuned in this [config](/src/config.py) file:
+The whole ensemble can be trained from scratch either using all the cells in [this jupyter notebook](/src/all_in_one_predictor.ipynb) or running [this python file](/src/trainer.py). Note that you will still need the Google Maps API data, that we can't upload for copyright reasons. All the parameters can be tuned in this [config](/src/config.py) file:
 
 - `loss` controls which loss function will be used to train the single networks. Available loss functions are [dice loss](https://arxiv.org/abs/1911.02855) and [binary_cross_entropy](https://en.wikipedia.org/wiki/Cross_entropy).
 - `net_types` sets which nets will be used in the network. It must be a subset of: `['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet']`.
@@ -128,46 +128,56 @@ A json dump of the configurations for every run will also be stored in the submi
       "ures_resnet50v2",
       "uspp_resnet50v2"
    ],
-   "additional_epochs":30,
+   "additional_epochs":40,
    "competition_epochs":60,
    "loss":"dice",
    "learning_rate_additional_data":0.0001,
    "learning_rate_competition_data":1e-05,
    "treshold":0.4,
-   "model_id":"submission_30-05-2020,08-11",
-   "submission_root":"../submissions/submission_30-05-2020,08-11/",
-   "submission_path":"../submissions/submission_30-05-2020,08-11/submission.csv",
-   "checkpoint_root":"../submissions/submission_30-05-2020,08-11/checkpoints/",
-   "prediction_root":"../submissions/submission_30-05-2020,08-11/predictions/",
+   "data_paths":{
+      "data_dir":"/cluster/home/dchiappal/PochiMaPochi/data/",
+      "image_path":"/cluster/home/dchiappal/PochiMaPochi/data/training/images/",
+      "groundtruth_path":"/cluster/home/dchiappal/PochiMaPochi/data/training/groundtruth/",
+      "additional_images_path":"/cluster/home/dchiappal/PochiMaPochi/data/additional_data/images/",
+      "additional_masks_path":"/cluster/home/dchiappal/PochiMaPochi/data/additional_data/masks/",
+      "test_data_path":"/cluster/home/dchiappal/PochiMaPochi/data/test_images/"
+   },
+   "model_id":"27-06-2020,11-59",
+   "submission_root":"../submissions/submission_27-06-2020,11-59/",
+   "submission_path":"../submissions/submission_27-06-2020,11-59/submission.csv",
+   "figures_path":"../submissions/submission_27-06-2020,11-59/predictions.png",
+   "checkpoint_root":"../submissions/submission_27-06-2020,11-59/checkpoints/",
+   "prediction_root":"../submissions/submission_27-06-2020,11-59/predictions/",
+   "final_predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/final_ensemble_predictions.npy",
    "u_xception":{
       "batch_size":8,
-      "checkpoint":"../submissions/submission_30-05-2020,08-11/checkpoints/u_xception_weights.npy",
-      "predictions_path":"../submissions/submission_30-05-2020,08-11/predictions/u_xception_predictions.npy"
+      "checkpoint":"../submissions/submission_27-06-2020,11-59/checkpoints/u_xception_weights.npy",
+      "predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/u_xception_predictions.npy"
    },
    "ures_xception":{
-      "batch_size":6,
-      "checkpoint":"../submissions/submission_30-05-2020,08-11/checkpoints/ures_xception_weights.npy",
-      "predictions_path":"../submissions/submission_30-05-2020,08-11/predictions/ures_xception_predictions.npy"
+      "batch_size":4,
+      "checkpoint":"../submissions/submission_27-06-2020,11-59/checkpoints/ures_xception_weights.npy",
+      "predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/ures_xception_predictions.npy"
    },
    "uspp_xception":{
       "batch_size":6,
-      "checkpoint":"../submissions/submission_30-05-2020,08-11/checkpoints/uspp_xception_weights.npy",
-      "predictions_path":"../submissions/submission_30-05-2020,08-11/predictions/uspp_xception_predictions.npy"
+      "checkpoint":"../submissions/submission_27-06-2020,11-59/checkpoints/uspp_xception_weights.npy",
+      "predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/uspp_xception_predictions.npy"
    },
    "u_resnet50v2":{
       "batch_size":8,
-      "checkpoint":"../submissions/submission_30-05-2020,08-11/checkpoints/u_resnet50v2_weights.npy",
-      "predictions_path":"../submissions/submission_30-05-2020,08-11/predictions/u_resnet50v2_predictions.npy"
+      "checkpoint":"../submissions/submission_27-06-2020,11-59/checkpoints/u_resnet50v2_weights.npy",
+      "predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/u_resnet50v2_predictions.npy"
    },
    "ures_resnet50v2":{
       "batch_size":6,
-      "checkpoint":"../submissions/submission_30-05-2020,08-11/checkpoints/ures_resnet50v2_weights.npy",
-      "predictions_path":"../submissions/submission_30-05-2020,08-11/predictions/ures_resnet50v2_predictions.npy"
+      "checkpoint":"../submissions/submission_27-06-2020,11-59/checkpoints/ures_resnet50v2_weights.npy",
+      "predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/ures_resnet50v2_predictions.npy"
    },
    "uspp_resnet50v2":{
       "batch_size":4,
-      "checkpoint":"../submissions/submission_30-05-2020,08-11/checkpoints/uspp_resnet50v2_weights.npy",
-      "predictions_path":"../submissions/submission_30-05-2020,08-11/predictions/uspp_resnet50v2_predictions.npy"
+      "checkpoint":"../submissions/submission_27-06-2020,11-59/checkpoints/uspp_resnet50v2_weights.npy",
+      "predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/uspp_resnet50v2_predictions.npy"
    }
 }
 ```
