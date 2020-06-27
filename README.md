@@ -15,6 +15,7 @@
 - [Additional Data](#additional-data)
 - [Final Prediction](#final-prediction)
 - [Train and Predict in a single run](#train-and-predict-in-a-single-run)
+- [Requirements](#requirements)
 
 ## Team 
 -  **Daniele Chiappalupi** ([@daniCh8](https://github.com/daniCh8))<br>dchiappal@student.ethz.ch
@@ -110,11 +111,13 @@ The whole ensemble can be trained from scratch either using all the cells in [th
 - `learning_rate_additional_data` sets the learning rate that will be used during the training on the additional Google Maps API data.
 - `learning_rate_competition_data` sets the learning rate that will be used during the training on the competition data.
 - `treshold` sets the treshold that will be used to compute the final submission on 16*16 batches.
-- `batch_size` controls the batch_size that will be used during the training. There's a different one for each net, in order to be able to reduce the batch size of the bigger networks and not run into a `ResourceExhausted` failure.
+- `data_paths` controls the paths where to find the training data.
 - `model_id` saves the id of the network, so that every run will be saved in a different path.
 - `submission_path` controls where the submission file will be stored.
 - `checkpoint_root` controls where the single networks weight checkpoint files will be stored.
 - `predictions_path` controls where the single model predictions to be averaged will be stored.
+- `final_predictions_path` controls where the final ensemble model predictions.
+- `batch_size` controls the batch_size that will be used during the training. There's a different one for each net, in order to be able to reduce the batch size of the bigger networks and not run into a `ResourceExhausted` failure.
 
 A json dump of the configurations for every run will also be stored in the submission directory, so that every run is bind with its parameters. Below is an example of `config` file, in json syntax (dumped from a project run).
 
@@ -183,3 +186,7 @@ A json dump of the configurations for every run will also be stored in the submi
 ```
 
 Note that the models checkpoints are stored as numpy files. Indeed, we're not actually storing `keras`' checkpoints, but the weights of the networks. This is done to speed-up both the saving and the loading model phases. A model saved this way can be loaded by creating a new `NNet` class, with parameters `net_type` equals to the type of network we want to load and `load_weights` equals to the path where the weights file of such model are stored.
+
+## Requirements
+
+External dependencies are listed in the [setup](/src/setup.py) file, along with their versions.
