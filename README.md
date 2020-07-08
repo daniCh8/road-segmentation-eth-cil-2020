@@ -212,10 +212,10 @@ export WORKON_HOME=$HOME/.virtualenvs
 source $HOME/.local/bin/virtualenvwrapper.sh
 ```
 
-After having installed it, we'll use it to create the environment. Here, we'll call it `pochimapochi`:
+After having installed it, we'll use it to create the environment. Here, we'll call it `pochi-ma-pochi`:
 
 ```sh
-mkvirtualenv "pochimapochi"
+mkvirtualenv "pochi-ma-pochi"
 ```
 
 The newly created virtual environment will be activated by default.
