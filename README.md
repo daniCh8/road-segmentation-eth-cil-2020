@@ -16,6 +16,7 @@
 - [Final Prediction](#final-prediction)
 - [Train and Predict in a single run](#train-and-predict-in-a-single-run)
 - [Requirements](#requirements)
+- [Usage in leonhard](#usage-in-leonhard)
 
 ## Team 
 -  **Daniele Chiappalupi** ([@daniCh8](https://github.com/daniCh8))<br>dchiappal@student.ethz.ch
@@ -190,3 +191,105 @@ Note that the models checkpoints are stored as numpy files. Indeed, we're not ac
 ## Requirements
 
 External dependencies are listed in the [setup](/src/setup.py) file, along with their versions.
+
+## Usage in [Leonhard](https://scicomp.ethz.ch/wiki/Leonhard)
+
+Here is the workflow to use the train the ensemble inside the leonhard cluster.
+
+We need to load the required modules including python, CUDA and cuDNN provided on the server:
+
+```sh
+module load python_gpu/3.6.4 hdf5 eth_proxy
+module load cudnn/7.2
+```
+
+Then we'll use a virtual environment in order to install the required dependencies. We'll use `virtualenvwreapper`:
+
+```sh
+pip install virtualenvwrapper
+export VIRTUALENVWRAPPER_PYTHON=/cluster/apps/python/3.6.4/bin/python
+export WORKON_HOME=$HOME/.virtualenvs
+source $HOME/.local/bin/virtualenvwrapper.sh
+```
+
+After having installed it, we'll use it to create the environment. Here, we'll call it `pochimapochi`:
+
+```sh
+mkvirtualenv "pochimapochi"
+```
+
+The newly created virtual environment will be activated by default.
+It might be a good idea to add this set of commands to the `.bashrc` file in order to not have to run them every time we access to the cluster. To do so, just add the following lines at the end of `~/.bashrc`:
+
+```sh
+module load python_gpu/3.6.4 hdf5 eth_proxy
+module load cudnn/7.2
+export VIRTUALENVWRAPPER_PYTHON=/cluster/apps/python/3.6.4/bin/python
+export WORKON_HOME=$HOME/.virtualenvs
+source $HOME/.local/bin/virtualenvwrapper.sh
+workon "pochi-ma-pochi"
+```
+
+We'll now need to install all the required dependencies, and make sure to not have any version incompatibilities between different packages. Go inside the [src](/src) folder and run:
+
+```sh
+python setup.py install
+pip install --upgrade scikit-image
+pip install --upgrade numpy
+pip install --upgrade scipy
+pip install --upgrade scikit-learn
+```
+
+Now, we're all set to run our networks.
+Let's check that everything went fine: we'll run an interactive GPU environment to see if the tensorflow and keras versions are the right one:
+
+```sh
+bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
+```
+
+We'll have to wait some time for the dispatch. When we'll be inside, we'll run the following commands to check if everything is all right:
+
+```sh
+python
+import keras
+keras.__version__
+import tensorflow as tf
+tf.__version__
+exit()
+exit
+```
+
+If everything was correctly set, the full output of this interactive session should be the following:
+
+```sh
+(pochi-ma-pochi) [dchiappal@lo-login-01 ~]$ bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
+Generic job.
+Job <6916529> is submitted to queue <gpu.4h>.
+<<Waiting for dispatch ...>>
+<<Starting on lo-s4-029>>
+
+The following have been reloaded with a version change:
+  1) cudnn/7.0 => cudnn/7.2
+
+(pochi-ma-pochi) [dchiappal@lo-s4-029 ~]$ python
+Python 3.6.4 (default, Apr 10 2018, 08:00:27)
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-16)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import keras
+Using TensorFlow backend.
+>>> keras.__version__
+'2.3.1'
+>>> import tensorflow as tf
+>>> tf.__version__
+'1.15.2'
+>>> exit()
+(pochi-ma-pochi) [dchiappal@lo-s4-029 ~]$ exit
+```
+
+Finally, we can submit our project to the GPU cue with the following command:
+
+```sh
+bsub -n 8 -W 12:00 -o log_test -R "rusage[mem=8192, ngpus_excl_p=1]" python ./trainer.py
+```
+
+Always remembering to set valid paths in the [config](/src/config.py) file.
