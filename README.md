@@ -244,7 +244,7 @@ We are now all set to run our networks.
 Let's check that everything went fine: we'll run an interactive GPU environment to see if the tensorflow and keras versions are the right ones:
 
 ```sh
-bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
+> bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
 ```
 
 We'll have to wait some time for the dispatch. Once we are inside, we'll run the following commands to check the libraries versions:
@@ -262,28 +262,28 @@ exit
 If everything was correctly set, the full output of this interactive session should be the following:
 
 ```sh
-(pochi-ma-pochi) [dchiappal@lo-login-01 ~]$ bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
+> (pochi-ma-pochi) [dchiappal@lo-login-01 ~]$ bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
 Generic job.
 Job <6916529> is submitted to queue <gpu.4h>.
-\<<Waiting for dispatch ...>>
-\<<Starting on lo-s4-029>>
+<\< Waiting for dispatch ... >>
+<\< Starting on lo-s4-029 >>
 
 The following have been reloaded with a version change:
   1) cudnn/7.0 => cudnn/7.2
 
-(pochi-ma-pochi) [dchiappal@lo-s4-029 ~]$ python
+> (pochi-ma-pochi) [dchiappal@lo-s4-029 ~]$ python
 Python 3.6.4 (default, Apr 10 2018, 08:00:27)
 [GCC 4.8.5 20150623 (Red Hat 4.8.5-16)] on linux
 Type "help", "copyright", "credits" or "license" for more information.
->>> import keras
+> >>> import keras
 Using TensorFlow backend.
->>> keras.__version__
+> >>> keras.__version__
 '2.3.1'
->>> import tensorflow as tf
->>> tf.__version__
+> >>> import tensorflow as tf
+> >>> tf.__version__
 '1.15.2'
->>> exit()
-(pochi-ma-pochi) [dchiappal@lo-s4-029 ~]$ exit
+> >>> exit()
+> (pochi-ma-pochi) [dchiappal@lo-s4-029 ~]$ exit
 ```
 
 Finally, we can submit our project to the GPU queue with the following command:
