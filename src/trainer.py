@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 for net_to_train in config['net_types']:
-    net_to_train = config['net_types'][0]
     net = NNet(net_type=net_to_train, data_paths=config['data_paths'])
     single_model_training(model=net,
                           save_path=config[net_to_train]['checkpoint'],
