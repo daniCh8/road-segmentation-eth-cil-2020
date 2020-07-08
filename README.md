@@ -122,7 +122,7 @@ The whole ensemble can be trained from scratch either using all the cells in [th
 
 A json dump of the configurations for every run will also be stored in the submission directory, so that every run is bind with its parameters. Below is an example of `config` file, in json syntax (dumped from a project run).
 
-```ruby
+```rust
 {
    "net_types":[
       "u_xception",
@@ -198,14 +198,14 @@ Here is the workflow we followed to train the ensemble inside the Leonhard clust
 
 We need to load the required modules including python, CUDA and cuDNN provided on the server:
 
-```sh
+```bash
 module load python_gpu/3.6.4 hdf5 eth_proxy
 module load cudnn/7.2
 ```
 
 Then we'll create a virtual environment in order to install and save the required dependencies. We'll use `virtualenvwrapper` to manage our virtual environments on the cluster:
 
-```sh
+```bash
 pip install virtualenvwrapper
 export VIRTUALENVWRAPPER_PYTHON=/cluster/apps/python/3.6.4/bin/python
 export WORKON_HOME=$HOME/.virtualenvs
@@ -214,14 +214,14 @@ source $HOME/.local/bin/virtualenvwrapper.sh
 
 After completing the installation, we'll create the environment. Here we'll call it `pochi-ma-pochi` like our team name:
 
-```sh
+```bash
 mkvirtualenv "pochi-ma-pochi"
 ```
 
 The newly created virtual environment will be activated by default.
 It might be a good idea to add this set of commands to the `.bashrc` file in order to not have to run them every time we access to the cluster. To do so, just add the following lines at the end of `~/.bashrc`:
 
-```sh
+```bash
 module load python_gpu/3.6.4 hdf5 eth_proxy
 module load cudnn/7.2
 export VIRTUALENVWRAPPER_PYTHON=/cluster/apps/python/3.6.4/bin/python
@@ -232,7 +232,7 @@ workon "pochi-ma-pochi"
 
 We'll now need to install all the required dependencies, and make sure to not have any version incompatibilities between different packages. Cd to the [src](/src) folder and run:
 
-```sh
+```bash
 python setup.py install
 pip install --upgrade scikit-image
 pip install --upgrade numpy
@@ -243,13 +243,13 @@ pip install --upgrade scikit-learn
 We are now all set to run our networks.
 Let's check that everything went fine: we'll run an interactive GPU environment to see if the tensorflow and keras versions are the right ones:
 
-```sh
-> bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
+```bash
+bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
 ```
 
 We'll have to wait some time for the dispatch. Once we are inside, we'll run the following commands to check the libraries versions:
 
-```sh
+```bash
 python
 import keras
 keras.__version__
