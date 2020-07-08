@@ -261,12 +261,12 @@ exit
 
 If everything was correctly set, the full output of this interactive session should be the following:
 
-```sh
+```rust
 > (pochi-ma-pochi) [dchiappal@lo-login-01 ~]$ bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
 Generic job.
 Job <6916529> is submitted to queue <gpu.4h>.
-<\< Waiting for dispatch ... >>
-<\< Starting on lo-s4-029 >>
+<<Waiting for dispatch ...>>
+<<Starting on lo-s4-029>>
 
 The following have been reloaded with a version change:
   1) cudnn/7.0 => cudnn/7.2
