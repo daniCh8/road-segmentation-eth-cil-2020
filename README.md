@@ -194,7 +194,7 @@ External dependencies are listed in the [setup](/src/setup.py) file, along with 
 
 ## Usage in [Leonhard](https://scicomp.ethz.ch/wiki/Leonhard)
 
-Here is the workflow to use the train the ensemble inside the leonhard cluster.
+Here is the workflow we followed to train the ensemble inside the Leonhard cluster.
 
 We need to load the required modules including python, CUDA and cuDNN provided on the server:
 
@@ -203,7 +203,7 @@ module load python_gpu/3.6.4 hdf5 eth_proxy
 module load cudnn/7.2
 ```
 
-Then we'll use a virtual environment in order to install the required dependencies. We'll use `virtualenvwreapper`:
+Then we'll create a virtual environment in order to install and save the required dependencies. We'll use `virtualenvwrapper` to manage our virtual environments on the cluster:
 
 ```sh
 pip install virtualenvwrapper
@@ -212,7 +212,7 @@ export WORKON_HOME=$HOME/.virtualenvs
 source $HOME/.local/bin/virtualenvwrapper.sh
 ```
 
-After having installed it, we'll use it to create the environment. Here, we'll call it `pochi-ma-pochi`:
+After completing the installation, we'll create the environment. Here we'll call it `pochi-ma-pochi` like our team name:
 
 ```sh
 mkvirtualenv "pochi-ma-pochi"
@@ -230,7 +230,7 @@ source $HOME/.local/bin/virtualenvwrapper.sh
 workon "pochi-ma-pochi"
 ```
 
-We'll now need to install all the required dependencies, and make sure to not have any version incompatibilities between different packages. Go inside the [src](/src) folder and run:
+We'll now need to install all the required dependencies, and make sure to not have any version incompatibilities between different packages. Cd to the [src](/src) folder and run:
 
 ```sh
 python setup.py install
@@ -240,14 +240,14 @@ pip install --upgrade scipy
 pip install --upgrade scikit-learn
 ```
 
-Now, we're all set to run our networks.
-Let's check that everything went fine: we'll run an interactive GPU environment to see if the tensorflow and keras versions are the right one:
+We are now all set to run our networks.
+Let's check that everything went fine: we'll run an interactive GPU environment to see if the tensorflow and keras versions are the right ones:
 
 ```sh
 bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
 ```
 
-We'll have to wait some time for the dispatch. When we'll be inside, we'll run the following commands to check if everything is all right:
+We'll have to wait some time for the dispatch. Once we are inside, we'll run the following commands to check the libraries versions:
 
 ```sh
 python
@@ -286,7 +286,7 @@ Using TensorFlow backend.
 (pochi-ma-pochi) [dchiappal@lo-s4-029 ~]$ exit
 ```
 
-Finally, we can submit our project to the GPU cue with the following command:
+Finally, we can submit our project to the GPU queue with the following command:
 
 ```sh
 bsub -n 8 -W 12:00 -o log_test -R "rusage[mem=8192, ngpus_excl_p=1]" python ./trainer.py
