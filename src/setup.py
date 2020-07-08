@@ -10,7 +10,9 @@ setup(
 
     python_requires='>=3.5',
     install_requires=[
-            'tensorflow-gpu==1.12.0',
+            'tensorflow-gpu==1.15.2',
+            'tensorflow==1.15.2',
+            'keras=2.3.1',
             'scikit-image',
             'albumentations',
             'tqdm',
