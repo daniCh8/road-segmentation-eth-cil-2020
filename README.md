@@ -16,7 +16,7 @@
 - [Final Prediction](#final-prediction)
 - [Train and Predict in a single run](#train-and-predict-in-a-single-run)
 - [Requirements](#requirements)
-- [Usage in leonhard](#usage-in-leonhard)
+- [Usage in Leonhard](#usage-in-leonhard)
 
 ## Team 
 -  **Daniele Chiappalupi** ([@daniCh8](https://github.com/daniCh8))<br>dchiappal@student.ethz.ch
@@ -265,8 +265,8 @@ If everything was correctly set, the full output of this interactive session sho
 (pochi-ma-pochi) [dchiappal@lo-login-01 ~]$ bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
 Generic job.
 Job <6916529> is submitted to queue <gpu.4h>.
-<<Waiting for dispatch ...>>
-<<Starting on lo-s4-029>>
+\<<Waiting for dispatch ...>>
+\<<Starting on lo-s4-029>>
 
 The following have been reloaded with a version change:
   1) cudnn/7.0 => cudnn/7.2
