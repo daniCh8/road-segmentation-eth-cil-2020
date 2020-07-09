@@ -298,5 +298,6 @@ Let's break down the arguments of the call:
 - `-W 12:00` means that the job can't last more than 12 hours. This makes it go into the 24h queue of the cluster.
 - `-o log_test` means that the output of the job will be stored into a file called `log_test`, placed where the command is executed.
 - `-R "rusage[mem=8192, ngpus_excl_p=1]"` describe how much memory we request per CPU (8GB) and how many GPUs we ask (1).
+- `-R "select[gpu_model0==TeslaV100_SXM2_32GB]"` specifically asks for a `Tesla V100` GPU, needed in order to make the training faster.
 
 Always remembering to set valid paths in the [config](/src/config.py) file.
