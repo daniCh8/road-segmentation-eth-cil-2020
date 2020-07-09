@@ -13,7 +13,8 @@ for net_to_train in config['net_types']:
                           b_size=config[net_to_train]['batch_size'],
                           loss=config['loss'],
                           l_rate_a=config['learning_rate_additional_data'],
-                          l_rate_b=config['learning_rate_competition_data'])
+                          l_rate_b=config['learning_rate_competition_data'],
+                          v=config['verbose'])
 
     predictions = net.predict_test_data()
     np.save(file=config[net_to_train]['predictions_path'], arr=predictions)

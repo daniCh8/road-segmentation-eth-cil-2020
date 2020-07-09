@@ -123,7 +123,7 @@ class NNet:
         else:
             self.valid_set = next(self.data.generator(len(self.data.images)))
         
-    def train(self, loss='bce', epochs=100, l_rate=.0001, batch_size=8, train_on='competition_data'):
+    def train(self, loss='bce', epochs=100, l_rate=.0001, batch_size=8, train_on='competition_data', verb=1):
         assert loss in ['bce', 'dice'], "loss must be one of ['bce', 'dice']"
         assert train_on in ['competition_data', 'google_data'], "train_on must be one of ['competition_data', 'google_data']"
         optimizer = keras.optimizers.adam(l_rate)
@@ -140,12 +140,14 @@ class NNet:
                 self.model.fit_generator(generator=self.data.generator(batch_size),
                                          validation_data=self.valid_set,
                                          epochs=epochs, steps_per_epoch=steps,
-                                         callbacks=create_callbacks(loss, with_val=True))
+                                         callbacks=create_callbacks(loss, with_val=True),
+                                         verbose=verb)
             else:
                 self.model.fit_generator(generator=self.data.generator(batch_size),
                                          epochs=epochs,
                                          steps_per_epoch=steps,
-                                         callbacks=create_callbacks(loss))
+                                         callbacks=create_callbacks(loss),
+                                         verbose=verb)
                 
         else:
             steps = len(self.data.additional_images) // batch_size
@@ -153,7 +155,8 @@ class NNet:
             self.model.fit_generator(generator=self.data.additional_generator(batch_size),
                                      epochs=epochs,
                                      steps_per_epoch=steps,
-                                     callbacks=create_callbacks(loss))
+                                     callbacks=create_callbacks(loss),
+                                     verbose=verb)
         
     def check_outputs(self):
         plt.figure(figsize=(15, 15))

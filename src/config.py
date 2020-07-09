@@ -16,6 +16,7 @@ config['loss'] = 'dice'
 config['learning_rate_additional_data'] = 1e-4
 config['learning_rate_competition_data'] = 1e-5
 config['treshold'] = .4
+config['verbose'] = 2
 
 config['data_paths'] = {}
 config['data_paths']['data_dir'] = '/cluster/home/dchiappal/PochiMaPochi/data/'
