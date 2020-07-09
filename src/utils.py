@@ -58,13 +58,13 @@ def merge_predictions(predictions, mode='mean'):
     return merged
 
 
-def single_model_training(model, save_path, additional_epochs=30, competition_epochs=60, b_size=8, loss='dice', l_rate_a=.0001, l_rate_b=.00001):
+def single_model_training(model, save_path, additional_epochs=30, competition_epochs=60, b_size=8, loss='dice', l_rate_a=.0001, l_rate_b=.00001, v=1):
     print('Training model {}.\nParameters:'.format(model.net_type))
     print('\tbatch_size: {};\n\tloss: {};\n\tl_rate_google_data: {};\n\tl_rate_competition_data: {};'.format(b_size, loss, l_rate_a, l_rate_b))
     print('Training on additional data.')
-    model.train(loss=loss, epochs=additional_epochs, train_on='google_data', l_rate=l_rate_a, batch_size=b_size)
+    model.train(loss=loss, epochs=additional_epochs, train_on='google_data', l_rate=l_rate_a, batch_size=b_size, verb=v)
     print('Training on competition data.')
-    model.train(loss=loss, epochs=competition_epochs, train_on='competition_data', l_rate=l_rate_b, batch_size=b_size)
+    model.train(loss=loss, epochs=competition_epochs, train_on='competition_data', l_rate=l_rate_b, batch_size=b_size, verb=v)
     print('Saving model at path: {}'.format(save_path))
     model.save_model(save_path)
     return
