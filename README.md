@@ -138,6 +138,7 @@ A json dump of the configurations for every run will also be stored in the submi
    "learning_rate_additional_data":0.0001,
    "learning_rate_competition_data":1e-05,
    "treshold":0.4,
+   "verbose":2,
    "data_paths":{
       "data_dir":"/cluster/home/dchiappal/PochiMaPochi/data/",
       "image_path":"/cluster/home/dchiappal/PochiMaPochi/data/training/images/",
@@ -289,13 +290,13 @@ Using TensorFlow backend.
 Finally, we can submit our project to the GPU queue with the following command:
 
 ```sh
-bsub -n 8 -W 12:00 -o log_test -R "rusage[mem=8192, ngpus_excl_p=1]" python ./trainer.py
+bsub -n 8 -W 12:00 -o log_test -R "rusage[mem=8192, ngpus_excl_p=1]" -R "select[gpu_model0==TeslaV100_SXM2_32GB]" python ./trainer.py
 ```
 
 Let's break down the arguments of the call:
 - `-n 8` means that we are requesting 8 CPUs;
 - `-W 12:00` means that the job can't last more than 12 hours. This makes it go into the 24h queue of the cluster.
-- `-o log_test` means that the output of the job will be stored into a file called log_test, placed where the command is executed.
+- `-o log_test` means that the output of the job will be stored into a file called `log_test`, placed where the command is executed.
 - `-R "rusage[mem=8192, ngpus_excl_p=1]"` describe how much memory we request per CPU (8GB) and how many GPUs we ask (1).
 
 Always remembering to set valid paths in the [config](/src/config.py) file.
