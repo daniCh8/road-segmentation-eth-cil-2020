@@ -103,7 +103,7 @@ Finally, the submission `csv` file is created with the parameter  `treshold = .4
 Note that the test images have a shape of  `608*608*3`, whereas the training images are  `400*400*3`. In order to make the predictions, we cut the test images in four squares of  size `400*400*3`, and then recomposed the full prediction merging those blocks, averaging the pixels in common. This is done in the function  `merge prediction`, which can be found in the [utils](/src/utils.py) module.
 
 ## Train and Predict in a single run
-The whole ensemble can be trained from scratch either using all the cells in [this jupyter notebook](/src/all_in_one_predictor.ipynb) or running [this python file](/src/trainer.py). Note that you will still need the Google Maps API data, that we can't upload for copyright reasons. All the parameters can be tuned in this [config](/src/config.py) file:
+The whole ensemble can be trained from scratch either using all the cells in [this jupyter notebook](/src/all_in_one_predictor.ipynb) or using [this python file](/src/trainer.py) as explained below in the [Usage in Leonhard](#usage-in-leonhard) section. Note that you will still need the Google Maps API data, that we can't upload for copyright reasons. All the parameters can be tuned in this [config](/src/config.py) file:
 
 - `loss` controls which loss function will be used to train the single networks. Available loss functions are [dice loss](https://arxiv.org/abs/1911.02855) and [binary_cross_entropy](https://en.wikipedia.org/wiki/Cross_entropy).
 - `net_types` sets which nets will be used in the network. It must be a subset of: `['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet']`.
@@ -287,17 +287,31 @@ Using TensorFlow backend.
 > (pochi-ma-pochi) [dchiappal@lo-s4-029 ~]$ exit
 ```
 
-Finally, we can submit our project to the GPU queue with the following command:
+Finally, we can submit our project to the GPU queue. We used GCP to train our project because Leonhard has been shut down for several weeks at the time of this project due to a hacker attack. On GCP, using the [all_in_one_predictor](/src/all_in_one_predictor.ipynb), it takes roughly 8 hours to train all the ensemble from scratch. However, Leonhard is a bit slower and hence we decided to train every network in a different job to parallelize the work. Below are the six jobs that should be submitted:
 
 ```sh
-bsub -n 8 -W 12:00 -o log_test -R "rusage[mem=8192, ngpus_excl_p=1]" -R "select[gpu_model0==TeslaV100_SXM2_32GB]" python ./trainer.py
+bsub -n 8 -W 24:00 -o logs/u_xception -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -n u_xception
+bsub -n 8 -W 24:00 -o logs/ures_xception -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -n ures_xception
+bsub -n 8 -W 24:00 -o logs/uspp_xception -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -n uspp_xception
+bsub -n 8 -W 24:00 -o logs/u_resnet -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -n u_resnet50v2
+bsub -n 8 -W 24:00 -o logs/ures_resnet -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -n ures_resnet50v2
+bsub -n 8 -W 24:00 -o logs/uspp_resnet -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -n uspp_resnet50v2
 ```
+
+Always remembering to set valid data paths in the [config](/src/config.py) file.
 
 Let's break down the arguments of the call:
 - `-n 8` means that we are requesting 8 CPUs;
-- `-W 12:00` means that the job can't last more than 12 hours. This makes it go into the 24h queue of the cluster.
-- `-o log_test` means that the output of the job will be stored into a file called `log_test`, placed where the command is executed.
+- `-W 24:00` means that the job can't last more than 24 hours. This makes it go into the 24h queue of the cluster.
+- `-o logs/x` means that the output of the job will be stored into the file `./logs/x`.
 - `-R "rusage[mem=8192, ngpus_excl_p=1]"` describe how much memory we request per CPU (8GB) and how many GPUs we ask (1).
-- `-R "select[gpu_model0==TeslaV100_SXM2_32GB]"` specifically asks for a `Tesla V100` GPU, needed in order to make the training faster.
+- `-p pochi_ma_pochi_project` sets the name of the directory where to store the outputs of the training.
+- `-n x` selects the network to train.
 
-Always remembering to set valid paths in the [config](/src/config.py) file.
+Once all those jobs are finished, we can aggregate all the predictions in our ensemble with the following command:
+
+```sh
+bsub -n 8 -W 24:00 -o -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -s predict
+```
+
+And the project will be completed.
