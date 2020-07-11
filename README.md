@@ -248,7 +248,7 @@ Let's check that everything went fine: we'll run an interactive GPU environment 
 bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
 ```
 
-We'll have to wait some time for the dispatch. Once we are inside, we'll run the following commands to check the libraries versions:
+We'll have to wait some time for the dispatch. Once we are inside, we'll run the following commands to check the versions of tensorflow and keras. Also, it's important to check that we are actually using the GPU:
 
 ```bash
 python
@@ -256,6 +256,8 @@ import keras
 keras.__version__
 import tensorflow as tf
 tf.__version__
+tf.config.experimental.list_physical_devices('GPU')
+sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 exit()
 exit
 ```
@@ -265,14 +267,14 @@ If everything was correctly set, the full output of this interactive session sho
 ```rust
 > (pochi-ma-pochi) [dchiappal@lo-login-01 ~]$ bsub -Is -n 1 -W 1:00 -R "rusage[mem=4096, ngpus_excl_p=1]" bash
 Generic job.
-Job <6916529> is submitted to queue <gpu.4h>.
+Job <7033720> is submitted to queue <gpu.4h>.
 <<Waiting for dispatch ...>>
-<<Starting on lo-s4-029>>
+<<Starting on lo-s4-020>>
 
 The following have been reloaded with a version change:
-  1) cudnn/7.0 => cudnn/7.2
+  1) cuda/10.0.130 => cuda/9.0.176     2) cudnn/7.2 => cudnn/7.0
 
-> (pochi-ma-pochi) [dchiappal@lo-s4-029 ~]$ python
+> (pochi-ma-pochi) [dchiappal@lo-s4-020 ~]$ python
 Python 3.6.4 (default, Apr 10 2018, 08:00:27)
 [GCC 4.8.5 20150623 (Red Hat 4.8.5-16)] on linux
 Type "help", "copyright", "credits" or "license" for more information.
@@ -283,8 +285,26 @@ Using TensorFlow backend.
 > >>> import tensorflow as tf
 > >>> tf.__version__
 '1.15.2'
+> >>> tf.config.experimental.list_physical_devices('GPU')
+2020-07-11 19:38:13.519467: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcuda.so.1
+2020-07-11 19:38:13.598754: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1639] Found device 0 with properties:
+name: GeForce GTX 1080 major: 6 minor: 1 memoryClockRate(GHz): 1.7335
+pciBusID: 0000:0e:00.0
+2020-07-11 19:38:13.599744: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-07-11 19:38:13.602673: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+2020-07-11 19:38:13.605091: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcufft.so.10.0
+2020-07-11 19:38:13.605878: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcurand.so.10.0
+2020-07-11 19:38:13.608723: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusolver.so.10.0
+2020-07-11 19:38:13.610998: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusparse.so.10.0
+2020-07-11 19:38:13.615122: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudnn.so.7
+2020-07-11 19:38:13.621832: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1767] Adding visible gpu devices: 0
+[PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+> >>> sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+[...]
+/job:localhost/replica:0/task:0/device:GPU:0 -> device: 0, name: GeForce GTX 1080, pci bus id: 0000:0e:00.0, compute capability: 6.1
+
 > >>> exit()
-> (pochi-ma-pochi) [dchiappal@lo-s4-029 ~]$ exit
+> (cil-2020-project) [dchiappal@lo-s4-020 ~]$ exit
 ```
 
 Finally, we can submit our project to the GPU queue. We used GCP to train our project because Leonhard has been shut down for several weeks at the time of this project due to a hacker attack. On GCP, using the [all_in_one_predictor](/src/all_in_one_predictor.ipynb), it takes roughly 8 hours to train all the ensemble from scratch. However, Leonhard is a bit slower and hence we decided to train every network in a different job to parallelize the work. Below are the six jobs that should be submitted:
