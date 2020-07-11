@@ -304,7 +304,7 @@ Let's break down the arguments of the call:
 - `-n 8` means that we are requesting 8 CPUs;
 - `-W 24:00` means that the job can't last more than 24 hours. This makes it go into the 24h queue of the cluster.
 - `-o logs/x` means that the output of the job will be stored into the file `./logs/x`.
-- `-R "rusage[mem=8192, ngpus_excl_p=1]"` describe how much memory we request per CPU (8GB) and how many GPUs we ask (1).
+- `-R "rusage[mem=8192, ngpus_excl_p=1]"` describes how much memory we request per CPU (8GB) and how many GPUs we ask (1).
 - `-p pochi_ma_pochi_project` sets the name of the directory where to store the outputs of the training.
 - `-n x` selects the network to train.
 
