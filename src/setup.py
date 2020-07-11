@@ -12,7 +12,7 @@ setup(
     install_requires=[
             'tensorflow-gpu==1.15.2',
             'tensorflow==1.15.2',
-            'keras=2.3.1',
+            'keras==2.3.1',
             'scikit-image',
             'albumentations',
             'tqdm',
