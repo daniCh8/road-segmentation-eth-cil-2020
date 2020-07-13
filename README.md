@@ -321,7 +321,7 @@ pciBusID: 0000:0e:00.0
 Finally, we can submit our project to the GPU queue (always remembering to set valid data paths in [config](/src/config.py)). This is the submission command we used:
 
 ```sh
-bsub -n 8 -W 12:00 -o project_log -R "rusage[mem=8192, ngpus_excl_p=1]" -R "select[gpu_model0==GeForceRTX2080Ti]" python trainer.py [-a --add_epochs] [-c --comp_epochs]
+bsub -n 8 -W 12:00 -o project_log -R "rusage[mem=8192, ngpus_excl_p=1]" -R "select[gpu_model0==GeForceRTX2080Ti]" python trainer.py [-a --add_epochs] [-c --comp_epochs] [-n --nets_to_train]
 ```
 
 Let's break down the arguments of the call:
@@ -332,5 +332,6 @@ Let's break down the arguments of the call:
 - `-R "select[gpu_model0==GeForceRTX2080Ti]"` explicitly requests a RTX2080Ti GPU for the job. We use it to speed up the run.
 - `-a` can be used to set the number of additional epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
 - `-c` can be used to set the number of competition epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
+- `-n` can be used to set a different subset of nets to train rather than the default one. The nets must be passed iteratively (i.e. `-n u_xception -n ures_xception -n uspp_xception` will train the subset of nets: `['u_xception', 'ures_xception', 'uspp_xception']`). The nets passed must be a subset of `['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2']`.
 
 Once all those jobs are finished, the project will be completed and all the outputs of the training, along with the final predictions, will be at the `submission_root` path set in [config](/src/config.py).

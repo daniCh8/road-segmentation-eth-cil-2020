@@ -34,15 +34,18 @@ config['submission_path'] = config['submission_root'] + 'submission.csv'
 config['figures_path'] = config['submission_root'] + 'predictions.png'
 config['checkpoint_root'] = config['submission_root'] + 'checkpoints/'
 config['prediction_root'] = config['submission_root'] + 'predictions/'
+config['csv_root'] = config['submission_root'] + 'csvs/'
 config['final_predictions_path'] = config['prediction_root'] + '{}_predictions.npy'.format('final_ensemble')
 os.makedirs(config['checkpoint_root'], exist_ok=True)
 os.makedirs(config['prediction_root'], exist_ok=True)
+os.makedirs(config['csv_root'], exist_ok=True)
 
 for net_type in config['net_types']:
     config[net_type] = {}  # if you want to tune some specific parameter
     config[net_type]['batch_size'] = 6
     config[net_type]['checkpoint'] = config['checkpoint_root'] + '{}_weights.npy'.format(net_type)
     config[net_type]['predictions_path'] = config['prediction_root'] + '{}_predictions.npy'.format(net_type)
+    config[net_type]['csv_path'] = config['csv_root'] + '{}_csv.csv'.format(net_type)
 
 config['u_xception']['batch_size'] = 8
 config['ures_xception']['batch_size'] = 4

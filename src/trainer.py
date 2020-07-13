@@ -1,12 +1,12 @@
 import argparse
 import shutil
 import os
-from config import config
-from model import NNet
-from utils import single_model_training
 import json
 import numpy as np
 import matplotlib.pyplot as plt
+from config import config
+from model import NNet
+from utils import single_model_training
 
 def main_train(config):
     for net_to_train in config['net_types']:
@@ -24,6 +24,8 @@ def main_train(config):
         predictions = net.predict_test_data()
         np.save(file=config[net_to_train]['predictions_path'], arr=predictions)
         print('saved model predictions at path: {}'.format(config[net_to_train]['predictions_path']))
+        net.create_submission_file(path=config[net_to_train]['csv_path'], treshold=config['treshold'])
+        print('saved model csv at path: {}'.format(config[net_to_train]['csv_path']))
 
 def main_predict(config):
     predictions = []
@@ -43,7 +45,7 @@ def main_predict(config):
     dummy_model.display_test_predictions(config['submission_path'], samples_number=94, figure_size=(20, 470))
     plt.savefig(config['figures_path'])
 
-def fix_config(config, path, net):
+def fix_config(config, path, nets):
     if path != 'default':
         shutil.rmtree(config['submission_root'])
 
@@ -52,51 +54,62 @@ def fix_config(config, path, net):
         config['figures_path'] = config['submission_root'] + 'predictions.png'
         config['checkpoint_root'] = config['submission_root'] + 'checkpoints/'
         config['prediction_root'] = config['submission_root'] + 'predictions/'
+        config['csv_root'] = config['submission_root'] + 'csvs/'
         config['final_predictions_path'] = config['prediction_root'] + '{}_predictions.npy'.format('final_ensemble')
         os.makedirs(config['checkpoint_root'], exist_ok=True)
         os.makedirs(config['prediction_root'], exist_ok=True)
+        os.makedirs(config['csv_root'], exist_ok=True)
 
         for net_type in config['net_types']:
             config[net_type]['checkpoint'] = config['checkpoint_root'] + '{}_weights.npy'.format(net_type)
             config[net_type]['predictions_path'] = config['prediction_root'] + '{}_predictions.npy'.format(net_type)
+            config[net_type]['csv_path'] = config['csv_root'] + '{}_csv.csv'.format(net_type)
     
-    if net != 'all':
+    if nets != []:
         for net_type in config['net_types']:
-            if net_type != net:
+            if net_type not in nets:
                 del config[net_type]
 
-        config['net_types'] = [net]
+        config['net_types'] = nets
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--save_path', dest='save_path', type=str, default='default', help='name of dir where to store training outputs')
-    parser.add_argument('-n', '--net_to_train', dest='net_name', type=str, default='all', help='name of the network to train')
+    parser.add_argument('-n', '--nets_to_train', dest='net_names', action='append', default=[], help='list of names of the networks to train')
     parser.add_argument('-s', '--scope', dest='scope', type=str, default='train', help='scope of the job - can be either train or predict')
     parser.add_argument('-a', '--add_epochs', dest='additional_epochs', type=int, default=-1, help='sets the number of epochs used to train the nets on the google data')
     parser.add_argument('-c', '--comp_epochs', dest='competition_epochs', type=int, default=-1, help='sets the number of epochs used to train the nets on the competition data')
     args = parser.parse_args()
 
     save_path = str(args.save_path)
-    net = str(args.net_name)
+    nets = list(args.net_names)
     scope = str(args.scope)
     additional_epochs = int(args.additional_epochs)
     competition_epochs = int(args.competition_epochs)
 
-    assert net in ['all', 'u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2'], "net_to_train must be one of ['all', 'u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2']"
+    print(nets)
+
+    assert nets==['all'] or set(nets).issubset(set(['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2'])), "nets_to_train must be a subset of ['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2']"
     assert scope in ['train', 'predict'], "scope must be one between train or predict"
     
-    if additional_epochs != -1:
-        assert additional_epochs > 0, "epochs number can't be lower or equal than 0"
-        config['additional_epochs'] = additional_epochs
+    if additional_epochs != -1 or competition_epochs != -1:
+        if additional_epochs != -1:
+            assert additional_epochs > 0, "epochs number can't be lower or equal than 0"
+            config['additional_epochs'] = additional_epochs
 
-    if competition_epochs != -1:
-        assert competition_epochs > 0, "epochs number can't be lower or equal than 0"
-        config['competition_epochs'] = competition_epochs
+        if competition_epochs != -1:
+            assert competition_epochs > 0, "epochs number can't be lower or equal than 0"
+            config['competition_epochs'] = competition_epochs
+        
+        os.remove(config['submission_root'] + 'config.json')
+        with open(config['submission_root'] + 'config.json', 'w') as fp:
+            json.dump(config, fp)
     
-    if save_path != 'default' or net != 'all':
-        fix_config(config, save_path, net)
+    if save_path != 'default' or nets != []:
+        id = config['model_id']
+        fix_config(config, save_path, nets)
         if scope == 'train':
-            with open(config['submission_root'] + 'config_{}.json'.format(net), 'w') as fp:
+            with open(config['submission_root'] + 'config_{}.json'.format(id), 'w') as fp:
                 json.dump(config, fp)
 
     if scope == 'train':
@@ -104,5 +117,6 @@ if __name__ == '__main__':
     elif scope == 'predict':
         main_predict(config)
     
-    if net == 'all':
+    if nets == []:
         main_predict(config)
+    
