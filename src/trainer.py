@@ -91,3 +91,6 @@ if __name__ == '__main__':
         main_train(config)
     elif scope == 'predict':
         main_predict(config)
+    
+    if net == 'all':
+        main_predict(config)
