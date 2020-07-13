@@ -15,9 +15,10 @@ setup(
             'scikit-image',
             'albumentations',
             'tqdm',
-            'keras',
+            'scikit-learn',
             'opencv-python',
             'numpy',
+            'pandas',
             'matplotlib'
     ]
 )
