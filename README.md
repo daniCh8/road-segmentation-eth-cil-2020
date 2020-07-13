@@ -322,6 +322,6 @@ Let's break down the arguments of the call:
 - `-R "rusage[mem=8192, ngpus_excl_p=1]"` describes how much memory we request per CPU (8GB) and how many GPUs we ask (1).
 - `-R "select[gpu_model0==GeForceRTX2080Ti]"` explicitly requests a RTX2080Ti GPU for the job. We use it to speed up the run.
 - `-a` can be used to set the number of additional epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
-- `ca` can be used to set the number of competition epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
+- `-c` can be used to set the number of competition epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
 
 Once all those jobs are finished, the project will be completed and all the outputs of the training, along with the final predictions, will be at the `submission_root` path set in [config](/src/config.py).
