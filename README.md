@@ -13,7 +13,7 @@
     - [DeepRes-UNet](#deepres-unet)
     - [D-UNet](#d-unet)
   - [Additional Data](#additional-data)
-  - [Final Prediction](#final-prediction)
+  - [Final Predictions](#final-predictions)
   - [Usage](#usage)
   - [Requirements](#requirements)
   - [Usage in Leonhard](#usage-in-leonhard)
@@ -92,7 +92,7 @@ Finally, the submission `csv` file is created with the parameter  `treshold = .4
 Note that the test images have a shape of  `608*608*3`, whereas the training images are  `400*400*3`. In order to make the predictions, we cut the test images in four squares of  size `400*400*3`, and then recomposed the full prediction merging those blocks, averaging the pixels in common. This is done in the function  `merge prediction`, which can be found in the [utils](/src/utils.py) module.
 
 ## Usage
-The whole ensemble can be trained from scratch either using all the cells in [this jupyter notebook](/src/all_in_one_predictor.ipynb) or using [this python file](/src/trainer.py) as explained below in the [Usage in Leonhard](#usage-in-leonhard) section. Note that you will still need the Google Maps API data, that we can't upload for copyright reasons.
+The whole ensemble can be trained from scratch either running all the cells in [this jupyter notebook](/src/all_in_one_predictor.ipynb) or using [this python file](/src/trainer.py) as explained below in the [Usage in Leonhard](#usage-in-leonhard) section. Note that you will still need the Google Maps API data, that we can't upload for copyright reasons.
 
 The training and checkpointing process of the nets is all handled by [model.py](/src/model.py), that contains the class `NNet`:
 
@@ -102,7 +102,7 @@ The training and checkpointing process of the nets is all handled by [model.py](
 
 `model_to_load` can be used to load any pretrained model. If it's `'None'`, a new network of type `net_type` will be created. In such case, `load_weights` can be used to recover the weights of a trained model. Obviously, if `load_weights` is not `'None'`, the weights must be coherent with the `net_type` created. `data_paths` can be used to define custom data paths, otherwise the default relative ones will be used.
 
-When using [all_in_one_predictor.ipynb](/src/all_in_one_predictor.ipynb) or [trainer.py](/src/trainer.py), all the project parameters can be tuned in this [config](/src/config.py) file. Here is an explanation of each one of them:
+When using [all_in_one_predictor.ipynb](/src/all_in_one_predictor.ipynb) or [trainer.py](/src/trainer.py), all the project parameters can be tuned via this [config](/src/config.py) file. Here is an explanation of each one of them:
 
 - `loss` controls which loss function will be used to train the single networks. Available loss functions are [dice loss](https://arxiv.org/abs/1911.02855) and [binary_cross_entropy](https://en.wikipedia.org/wiki/Cross_entropy).
 - `net_types` sets which nets will be used in the network. It must be a subset of: `['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet']`.
