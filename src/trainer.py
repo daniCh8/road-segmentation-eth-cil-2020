@@ -72,15 +72,27 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--save_path', dest='save_path', type=str, default='default', help='name of dir where to store training outputs')
     parser.add_argument('-n', '--net_to_train', dest='net_name', type=str, default='all', help='name of the network to train')
     parser.add_argument('-s', '--scope', dest='scope', type=str, default='train', help='scope of the job - can be either train or predict')
+    parser.add_argument('-a', '--add_epochs', dest='additional_epochs', type=int, default=-1, help='sets the number of epochs used to train the nets on the google data')
+    parser.add_argument('-c', '--comp_epochs', dest='competition_epochs', type=int, default=-1, help='sets the number of epochs used to train the nets on the competition data')
     args = parser.parse_args()
 
     save_path = str(args.save_path)
     net = str(args.net_name)
     scope = str(args.scope)
+    additional_epochs = int(args.additional_epochs)
+    competition_epochs = int(args.competition_epochs)
 
     assert net in ['all', 'u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2'], "net_to_train must be one of ['all', 'u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2']"
     assert scope in ['train', 'predict'], "scope must be one between train or predict"
+    
+    if additional_epochs != -1:
+        assert additional_epochs > 0, "epochs number can't be lower or equal than 0"
+        config['additional_epochs'] = additional_epochs
 
+    if competition_epochs != -1:
+        assert competition_epochs > 0, "epochs number can't be lower or equal than 0"
+        config['competition_epochs'] = competition_epochs
+    
     if save_path != 'default' or net != 'all':
         fix_config(config, save_path, net)
         if scope == 'train':
