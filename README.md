@@ -1,22 +1,23 @@
 # [Computational Intelligence Lab](http://www.vvz.ethz.ch/Vorlesungsverzeichnis/lerneinheit.view?lang=en&lerneinheitId=135225&semkez=2020S&ansicht=KATALOGDATEN&) 2020, Course Project
 
-- [Team](#team)
-- [Project Description](#project-description)
-- [Network Types](#network-types)
-  - [U-Xception Net](#u-xception-net)
-  - [URES-Xception](#ures-xception)
-  - [USPP-Xception](#uspp-xception)
-  - [U-ResNet50V2 Net](#u-resnet50v2-net)
-  - [URES-ResNet50V2 Net](#ures-resnet50v2-net)
-  - [USPP-ResNet50V2 Net](#uspp-resnet50v2-net)
-  - [DeepRes-UNet](#deepres-unet)
-  - [D-UNet](#d-unet)
-- [Usage](#usage)
-- [Additional Data](#additional-data)
-- [Final Prediction](#final-prediction)
-- [Train and Predict in a single run](#train-and-predict-in-a-single-run)
-- [Requirements](#requirements)
-- [Usage in Leonhard](#usage-in-leonhard)
+- [Computational Intelligence Lab 2020, Course Project](#computational-intelligence-lab-2020-course-project)
+  - [Team](#team)
+  - [Project Description](#project-description)
+  - [Network Types](#network-types)
+    - [U-Xception Net](#u-xception-net)
+    - [URES-Xception](#ures-xception)
+    - [USPP-Xception](#uspp-xception)
+    - [U-ResNet50V2 Net](#u-resnet50v2-net)
+    - [URES-ResNet50V2 Net](#ures-resnet50v2-net)
+    - [USPP-ResNet50V2 Net](#uspp-resnet50v2-net)
+    - [DeepRes-UNet](#deepres-unet)
+    - [D-UNet](#d-unet)
+  - [Usage](#usage)
+  - [Additional Data](#additional-data)
+  - [Final Prediction](#final-prediction)
+  - [Train and Predict in a single run](#train-and-predict-in-a-single-run)
+  - [Requirements](#requirements)
+  - [Usage in Leonhard](#usage-in-leonhard)
 
 ## Team 
 -  **Daniele Chiappalupi** ([@daniCh8](https://github.com/daniCh8))<br>dchiappal@student.ethz.ch
@@ -273,7 +274,7 @@ Job <7033720> is submitted to queue <gpu.4h>.
 <<Starting on lo-s4-020>>
 
 The following have been reloaded with a version change:
-  1) cuda/10.0.130 => cuda/9.0.176     2) cudnn/7.2 => cudnn/7.0
+  1) cuda/9.0.176 => cuda/10.0.130     2) cudnn/7.0 => cudnn/7.6.4
 
 > (pochi-ma-pochi) [dchiappal@lo-s4-020 ~]$ python
 Python 3.6.4 (default, Apr 10 2018, 08:00:27)
@@ -305,34 +306,22 @@ pciBusID: 0000:0e:00.0
 /job:localhost/replica:0/task:0/device:GPU:0 -> device: 0, name: GeForce GTX 1080, pci bus id: 0000:0e:00.0, compute capability: 6.1
 
 > >>> exit()
-> (cil-2020-project) [dchiappal@lo-s4-020 ~]$ exit
+> (pochi-ma-pochi) [dchiappal@lo-s4-020 ~]$ exit
 ```
 
-Finally, we can submit our project to the GPU queue. We used GCP to train our project because Leonhard has been shut down for several weeks at the time of this project due to a hacker attack. On GCP, using the [all_in_one_predictor](/src/all_in_one_predictor.ipynb), it takes roughly 8 hours to train all the ensemble from scratch. However, Leonhard is a bit slower and hence we decided to train every network in a different job to parallelize the work. Below are the six jobs that should be submitted:
+Finally, we can submit our project to the GPU queue (always remembering to set valid data paths in [config](/src/config.py)). This is the submission command we used:
 
 ```sh
-bsub -n 8 -W 24:00 -o logs/u_xception -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -n u_xception
-bsub -n 8 -W 24:00 -o logs/ures_xception -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -n ures_xception
-bsub -n 8 -W 24:00 -o logs/uspp_xception -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -n uspp_xception
-bsub -n 8 -W 24:00 -o logs/u_resnet -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -n u_resnet50v2
-bsub -n 8 -W 24:00 -o logs/ures_resnet -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -n ures_resnet50v2
-bsub -n 8 -W 24:00 -o logs/uspp_resnet -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -n uspp_resnet50v2
+bsub -n 8 -W 12:00 -o project_log -R "rusage[mem=8192, ngpus_excl_p=1]" -R "select[gpu_model0==GeForceRTX2080Ti]" python trainer.py [-a --add_epochs] [-c --comp_epochs]
 ```
-
-Always remembering to set valid data paths in the [config](/src/config.py) file.
 
 Let's break down the arguments of the call:
 - `-n 8` means that we are requesting 8 CPUs;
 - `-W 24:00` means that the job can't last more than 24 hours. This makes it go into the 24h queue of the cluster.
 - `-o logs/x` means that the output of the job will be stored into the file `./logs/x`.
 - `-R "rusage[mem=8192, ngpus_excl_p=1]"` describes how much memory we request per CPU (8GB) and how many GPUs we ask (1).
-- `-p pochi_ma_pochi_project` sets the name of the directory where to store the outputs of the training.
-- `-n x` selects the network to train.
+- `-R "select[gpu_model0==GeForceRTX2080Ti]"` explicitly requests a RTX2080Ti GPU for the job. We use it to speed up the run.
+- `-a` can be used to set the number of additional epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
+- `ca` can be used to set the number of competition epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
 
-Once all those jobs are finished, we can aggregate all the predictions in our ensemble with the following command:
-
-```sh
-bsub -n 8 -W 24:00 -o -R "rusage[mem=8192, ngpus_excl_p=1]" python trainer.py -p pochi_ma_pochi_project -s predict
-```
-
-And the project will be completed.
+Once all those jobs are finished, the project will be completed and all the outputs of the training, along with the final predictions, will be at the `submission_root` path set in [config](/src/config.py).
