@@ -317,11 +317,11 @@ bsub -n 8 -W 12:00 -o project_log -R "rusage[mem=8192, ngpus_excl_p=1]" -R "sele
 
 Let's break down the arguments of the call:
 - `-n 8` means that we are requesting 8 CPUs;
-- `-W 24:00` means that the job can't last more than 24 hours. This makes it go into the 24h queue of the cluster.
+- `-W 12:00` means that the job can't last more than 12 hours. This makes it go into the 24h queue of the cluster.
 - `-o logs/x` means that the output of the job will be stored into the file `./logs/x`.
 - `-R "rusage[mem=8192, ngpus_excl_p=1]"` describes how much memory we request per CPU (8GB) and how many GPUs we ask (1).
 - `-R "select[gpu_model0==GeForceRTX2080Ti]"` explicitly requests a RTX2080Ti GPU for the job. We use it to speed up the run.
 - `-a` can be used to set the number of additional epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
-- `ca` can be used to set the number of competition epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
+- `-c` can be used to set the number of competition epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
 
 Once all those jobs are finished, the project will be completed and all the outputs of the training, along with the final predictions, will be at the `submission_root` path set in [config](/src/config.py).
