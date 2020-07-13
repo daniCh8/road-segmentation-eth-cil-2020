@@ -224,7 +224,8 @@ It might be a good idea to add this set of commands to the `.bashrc` file in ord
 
 ```bash
 module load python_gpu/3.6.4 hdf5 eth_proxy
-module load cudnn/7.2
+module load cudnn/7.6.4
+module load cuda/10.0.130
 export VIRTUALENVWRAPPER_PYTHON=/cluster/apps/python/3.6.4/bin/python
 export WORKON_HOME=$HOME/.virtualenvs
 source $HOME/.local/bin/virtualenvwrapper.sh
