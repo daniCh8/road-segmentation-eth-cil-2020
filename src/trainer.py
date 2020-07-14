@@ -53,6 +53,7 @@ def fix_config(config, path, nets):
         config['submission_root'] = '../submissions/{}/'.format(path)
         config['submission_path'] = config['submission_root'] + 'submission.csv'
         config['figures_path'] = config['submission_root'] + 'predictions.png'
+        config['figures_pdf'] = config['submission_root'] + 'predictions.pdf'
         config['checkpoint_root'] = config['submission_root'] + 'checkpoints/'
         config['prediction_root'] = config['submission_root'] + 'predictions/'
         config['csv_root'] = config['submission_root'] + 'csvs/'
