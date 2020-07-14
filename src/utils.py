@@ -1,5 +1,11 @@
 import math
 import numpy as np
+from skimage.io import imread
+import os
+import shutil
+import matplotlib.pyplot as plt
+from tqdm import tqdm
+from PIL import Image
 
 
 def split_picture(test_picture):
@@ -68,6 +74,46 @@ def single_model_training(model, save_path, additional_epochs=30, competition_ep
     print('Saving model at path: {}'.format(save_path))
     model.save_model(save_path)
     return
+
+
+def save_predictions_pdf(net, config):
+    net.display_test_predictions(config['submission_path'], samples_number=94, figure_size=(20, 470))
+    plt.savefig(config['figures_path'])
+    
+    whole_image = imread(config['figures_path'])
+
+    images_path = config['submission_root'] + 'single_images/'
+    os.makedirs(images_path, exist_ok=True)
+
+    x = 4034
+    offset = 705-433
+    for i in tqdm(range(94)):
+        if i!=0 and i%20 == 0:
+            x += 5
+    
+        fig = plt.figure(figsize=(20, 15))
+        plt.axis('off')
+        plt.imshow(whole_image[x:x+offset, 200:1273])
+        plt.savefig(images_path+'pic_{}.png'.format(i), transparent=True)
+        plt.close()
+        x += offset
+    
+    images = os.listdir(images_path)
+
+    ims = []
+    for i in tqdm(images):
+        rgba = Image.open(images_path+i)
+        rgb = Image.new('RGB', rgba.size, (255, 255, 255))  # white background
+        rgb.paste(rgba, mask=rgba.split()[3])
+        ims.append(rgb)
+    
+    first_im = ims[0]
+    ims = ims[1:]
+
+    first_im.save(config['figures_pdf'], "PDF" ,resolution=100.0, save_all=True, append_images=ims)
+    shutil.rmtree(images_path)
+    os.remove(config['figures_path'])
+
 
 # the code below was rearranged by the code provided by the course's TAs
 # and it's used to build masks from a submission csv file

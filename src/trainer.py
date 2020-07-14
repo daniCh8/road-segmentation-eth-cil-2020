@@ -6,7 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from config import config
 from model import NNet
-from utils import single_model_training
+from utils import single_model_training, save_predictions_pdf
+
 
 def main_train(config):
     for net_to_train in config['net_types']:
@@ -24,8 +25,9 @@ def main_train(config):
         predictions = net.predict_test_data()
         np.save(file=config[net_to_train]['predictions_path'], arr=predictions)
         print('saved model predictions at path: {}'.format(config[net_to_train]['predictions_path']))
-        net.create_submission_file(path=config[net_to_train]['csv_path'], treshold=config['treshold'])
+        sub = net.create_submission_file(path=config[net_to_train]['csv_path'], treshold=config['treshold'])
         print('saved model csv at path: {}'.format(config[net_to_train]['csv_path']))
+
 
 def main_predict(config):
     predictions = []
@@ -41,9 +43,8 @@ def main_predict(config):
     dummy_model.test_images_predictions = mean_ensemble
     mean_sub = dummy_model.create_submission_file(path=config['submission_path'], treshold=config['treshold'])
 
-    dummy_model.display_test_predictions(config['submission_path'])
-    dummy_model.display_test_predictions(config['submission_path'], samples_number=94, figure_size=(20, 470))
-    plt.savefig(config['figures_path'])
+    save_predictions_pdf(dummy_model, config)
+
 
 def fix_config(config, path, nets):
     if path != 'default':
@@ -72,6 +73,7 @@ def fix_config(config, path, nets):
 
         config['net_types'] = nets
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--save_path', dest='save_path', type=str, default='default', help='name of dir where to store training outputs')
@@ -86,8 +88,6 @@ if __name__ == '__main__':
     scope = str(args.scope)
     additional_epochs = int(args.additional_epochs)
     competition_epochs = int(args.competition_epochs)
-
-    print(nets)
 
     assert nets==['all'] or set(nets).issubset(set(['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2'])), "nets_to_train must be a subset of ['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2']"
     assert scope in ['train', 'predict'], "scope must be one between train or predict"
@@ -114,9 +114,8 @@ if __name__ == '__main__':
 
     if scope == 'train':
         main_train(config)
+        if nets == []:
+            main_predict(config)
     elif scope == 'predict':
-        main_predict(config)
-    
-    if nets == []:
         main_predict(config)
     
