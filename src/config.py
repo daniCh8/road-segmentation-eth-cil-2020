@@ -43,15 +43,13 @@ os.makedirs(config['csv_root'], exist_ok=True)
 
 for net_type in config['net_types']:
     config[net_type] = {}  # if you want to tune some specific parameter
-    config[net_type]['batch_size'] = 6
+    config[net_type]['batch_size'] = 2
     config[net_type]['checkpoint'] = config['checkpoint_root'] + '{}_weights.npy'.format(net_type)
     config[net_type]['predictions_path'] = config['prediction_root'] + '{}_predictions.npy'.format(net_type)
     config[net_type]['csv_path'] = config['csv_root'] + '{}_csv.csv'.format(net_type)
 
-config['u_xception']['batch_size'] = 8
-config['ures_xception']['batch_size'] = 4
-config['u_resnet50v2']['batch_size'] = 8
-config['uspp_resnet50v2']['batch_size'] = 4
+config['u_xception']['batch_size'] = 4
+config['u_resnet50v2']['batch_size'] = 4
     
 with open(config['submission_root'] + 'config.json', 'w') as fp:
     json.dump(config, fp)
