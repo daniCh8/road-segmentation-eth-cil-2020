@@ -149,7 +149,6 @@ A json dump of the configurations for every run will also be stored in the submi
    "model_id":"27-06-2020,11-59",
    "submission_root":"../submissions/submission_27-06-2020,11-59/",
    "submission_path":"../submissions/submission_27-06-2020,11-59/submission.csv",
-   "figures_path":"../submissions/submission_27-06-2020,11-59/predictions.png",
    "checkpoint_root":"../submissions/submission_27-06-2020,11-59/checkpoints/",
    "prediction_root":"../submissions/submission_27-06-2020,11-59/predictions/",
    "final_predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/final_ensemble_predictions.npy",

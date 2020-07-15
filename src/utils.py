@@ -77,29 +77,44 @@ def single_model_training(model, save_path, additional_epochs=30, competition_ep
 
 
 def save_predictions_pdf(net, config):
-    net.display_test_predictions(config['submission_path'], samples_number=94, figure_size=(20, 470))
-    plt.savefig(config['figures_path'])
-    
-    whole_image = imread(config['figures_path'])
+    numbers = net.test_data_gen.numbers
+    sort_indices = np.argsort(numbers)
+    numbers = np.array(numbers)[sort_indices].tolist()
+    test_images = np.array(net.test_images)[sort_indices]
+    test_predictions = np.array(net.test_images_predictions)[sort_indices]
+    sub_outs = np.array(submission_outputs(config['submission_path'], numbers))
+
+    dim = test_predictions[0].shape[0]
 
     images_path = config['submission_root'] + 'single_images/'
     os.makedirs(images_path, exist_ok=True)
 
-    x = 4034
-    offset = 705-433
-    for i in tqdm(range(94)):
-        if i!=0 and i%20 == 0:
-            x += 5
-    
-        fig = plt.figure(figsize=(20, 15))
-        plt.axis('off')
-        plt.imshow(whole_image[x:x+offset, 200:1273])
+    print('Preparing prediction images...')
+
+    for i, num in tqdm(enumerate(numbers)):
+        fig = plt.figure(figsize=(17, 9))
+        fig.suptitle("Image #{}".format(num), fontsize=16)
+
+        ax1 = plt.subplot2grid((1, 3), (0, 0))
+        ax1.imshow(test_images[i])
+        ax1.axis('off')
+        ax1.set_title('Original Image')
+
+        ax2 = plt.subplot2grid((1, 3), (0, 1))
+        ax2.imshow(test_predictions[i].reshape(dim, dim), cmap= 'Greys_r')
+        ax2.axis('off')
+        ax2.set_title('Predicted Mask')
+
+        ax3 = plt.subplot2grid((1, 3), (0, 2))
+        ax3.imshow(sub_outs[i].reshape(dim, dim), cmap= 'Greys_r')
+        ax3.axis('off')
+        ax3.set_title('Submission Output')
+
         plt.savefig(images_path+'pic_{}.png'.format(i), transparent=True)
         plt.close()
-        x += offset
     
     images = os.listdir(images_path)
-
+    print('Outputting pdf of prediction images...')
     ims = []
     for i in tqdm(images):
         rgba = Image.open(images_path+i)
@@ -110,9 +125,8 @@ def save_predictions_pdf(net, config):
     first_im = ims[0]
     ims = ims[1:]
 
-    first_im.save(config['figures_pdf'], "PDF" ,resolution=100.0, save_all=True, append_images=ims)
+    first_im.save(config['figures_pdf'], "PDF" , resolution=100.0, save_all=True, append_images=ims)
     shutil.rmtree(images_path)
-    os.remove(config['figures_path'])
 
 
 # the code below was rearranged by the code provided by the course's TAs
