@@ -31,7 +31,6 @@ timestamp = now.strftime("%d-%m-%Y,%H-%M")
 config['model_id'] = timestamp
 config['submission_root'] = '../submissions/submission_{}/'.format(config['model_id'])
 config['submission_path'] = config['submission_root'] + 'submission.csv'
-config['figures_path'] = config['submission_root'] + 'predictions.png'
 config['figures_pdf'] = config['submission_root'] + 'predictions.pdf'
 config['checkpoint_root'] = config['submission_root'] + 'checkpoints/'
 config['prediction_root'] = config['submission_root'] + 'predictions/'
