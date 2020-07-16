@@ -69,6 +69,8 @@ def fix_config(config, path, nets):
             config[net_type]['csv_path'] = config['csv_root'] + '{}_csv.csv'.format(net_type)
     
     if nets != []:
+        if path == 'default':
+            os.remove(config['submission_root'] + 'config.json')
         for net_type in nets:
             if net_type not in config['net_types']:
                 config['net_types'].append(net_type)
