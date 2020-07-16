@@ -320,7 +320,7 @@ pciBusID: 0000:0e:00.0
 Finally, we can submit our project to the GPU queue (always remembering to set valid data paths in [config](/src/config.py)). This is the submission command we used:
 
 ```sh
-bsub -n 8 -W 12:00 -o project_log -R "rusage[mem=8192, ngpus_excl_p=1]" -R "select[gpu_model0==GeForceRTX2080Ti]" python trainer.py [-a --add_epochs] [-c --comp_epochs] [-n --nets_to_train]
+bsub -n 8 -W 12:00 -o project_log -R "rusage[mem=8192, ngpus_excl_p=1]" -R "select[gpu_model0==GeForceRTX2080Ti]" python trainer.py [-a --add_epochs] [-c --comp_epochs] [-n --nets_to_train] [-p --save_path] [-s --scope]
 ```
 
 Let's break down the arguments of the call:
@@ -332,5 +332,7 @@ Let's break down the arguments of the call:
 - `-a` can be used to set the number of additional epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
 - `-c` can be used to set the number of competition epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
 - `-n` can be used to set a different subset of nets to train rather than the default one. The nets must be passed iteratively (i.e. `-n u_xception -n ures_xception -n uspp_xception` will train the subset of nets: `['u_xception', 'ures_xception', 'uspp_xception']`). The nets passed must be a subset of `['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2', 'deepuresnet', 'dunet']`.
+- `-p` can be used to set the directory where to store the outputs of the training/prediction. If `-p` is specified, then such folder will be `../submissions/{-p}` rather than the default one `../submissions/{datetime_of_run}`.
+- `-s` can be used to use the run only to generate a prediction rather than training all the networks. To do so, `-s` should be set to `'predict'`, `-p` must be set to a output directory of a previous run and `-n` should be used to list the networks that the prediction ensemble should comprehend (if `-n` is not set, the ensemble will be generated out of the default six models). Obviously, to not run into an error when using `-s` to predict, the directory set in `-p` must contain the outputs of a previous training of the nets specified in `-n`.
 
 Once all those jobs are finished, the project will be completed and all the outputs of the training, along with the final predictions, will be at the `submission_root` path set in [config](/src/config.py).
