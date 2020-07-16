@@ -47,8 +47,10 @@ def main_predict(config):
 
 
 def fix_config(config, path, nets):
+    model_id = config['model_id']
     if path != 'default':
         shutil.rmtree(config['submission_root'])
+        model_id = path
 
         config['submission_root'] = '../submissions/{}/'.format(path)
         config['submission_path'] = config['submission_root'] + 'submission.csv'
@@ -67,6 +69,14 @@ def fix_config(config, path, nets):
             config[net_type]['csv_path'] = config['csv_root'] + '{}_csv.csv'.format(net_type)
     
     if nets != []:
+        for net_type in nets:
+            if net_type not in config['net_types']:
+                config['net_types'].append(net_type)
+                config[net_type] = {} 
+                config[net_type]['batch_size'] = 2
+                config[net_type]['checkpoint'] = config['checkpoint_root'] + '{}_weights.npy'.format(net_type)
+                config[net_type]['predictions_path'] = config['prediction_root'] + '{}_predictions.npy'.format(net_type)
+                config[net_type]['csv_path'] = config['csv_root'] + '{}_csv.csv'.format(net_type)
         for net_type in config['net_types']:
             if net_type not in nets:
                 del config[net_type]
@@ -89,7 +99,7 @@ if __name__ == '__main__':
     additional_epochs = int(args.additional_epochs)
     competition_epochs = int(args.competition_epochs)
 
-    assert nets==['all'] or set(nets).issubset(set(['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2'])), "nets_to_train must be a subset of ['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2']"
+    assert nets==['all'] or set(nets).issubset(set(['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2', 'deepuresnet', 'dunet'])), "nets_to_train must be a subset of ['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2', 'deepuresnet', 'dunet']"
     assert scope in ['train', 'predict'], "scope must be one between train or predict"
     
     if additional_epochs != -1 or competition_epochs != -1:
