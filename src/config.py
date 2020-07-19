@@ -17,6 +17,10 @@ def create_config(net_types=[], save_dir='', batch_sizes=[], additional_epochs=[
                      'uspp_resnet50v2']
     config['net_types'] = net_types
 
+    config['net_names'] = []
+    for i, net_type in enumerate(net_types):
+        config['net_names'].append('{}_{}'.format(str(i), net_type))
+
     config['loss'] = 'dice'
     config['learning_rate_additional_data'] = 1e-4
     config['learning_rate_competition_data'] = 1e-5
@@ -62,13 +66,14 @@ def create_config(net_types=[], save_dir='', batch_sizes=[], additional_epochs=[
         assert len(competition_epochs) == len(net_types), "the number of competition epochs provided is different than the number of nets to train"
     
     for i, net_type in enumerate(net_types):
-            config[net_type] = {} 
-            config[net_type]['batch_size'] = batch_sizes[i]
-            config[net_type]['additional_epochs'] = additional_epochs[i]
-            config[net_type]['competition_epochs'] = competition_epochs[i]
-            config[net_type]['checkpoint'] = config['checkpoint_root'] + '{}_{}_{}g_{}c_weights.npy'.format(i, net_type, additional_epochs[i], competition_epochs[i])
-            config[net_type]['predictions_path'] = config['prediction_root'] + '{}_{}_{}g_{}c_predictions.npy'.format(i, net_type, additional_epochs[i], competition_epochs[i])
-            config[net_type]['csv_path'] = config['csv_root'] + '{}_{}_{}g_{}c_csv.csv'.format(i, net_type, additional_epochs[i], competition_epochs[i])
+            net_name = config['net_names'][i]
+            config[net_name] = {} 
+            config[net_name]['batch_size'] = batch_sizes[i]
+            config[net_name]['additional_epochs'] = additional_epochs[i]
+            config[net_name]['competition_epochs'] = competition_epochs[i]
+            config[net_name]['checkpoint'] = config['checkpoint_root'] + '{}_{}_{}g_{}c_weights.npy'.format(i, net_type, additional_epochs[i], competition_epochs[i])
+            config[net_name]['predictions_path'] = config['prediction_root'] + '{}_{}_{}g_{}c_predictions.npy'.format(i, net_type, additional_epochs[i], competition_epochs[i])
+            config[net_name]['csv_path'] = config['csv_root'] + '{}_{}_{}g_{}c_csv.csv'.format(i, net_type, additional_epochs[i], competition_epochs[i])
 
     files = os.listdir(config['submission_root'])
     files = [file for file in files if file.endswith('.json')]
