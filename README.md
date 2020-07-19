@@ -106,14 +106,15 @@ When using [all_in_one_predictor.ipynb](/src/all_in_one_predictor.ipynb) or [tra
 
 - `loss` controls which loss function will be used to train the single networks. Available loss functions are [dice loss](https://arxiv.org/abs/1911.02855) and [binary_cross_entropy](https://en.wikipedia.org/wiki/Cross_entropy).
 - `net_types` sets which nets will be used in the network. It must be a subset of: `['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet']`.
-- `additional_epochs` sets the number of epochs that the network will train on the additional Google Maps API data.
-- `competition_epochs` sets the number of epochs that the network will train on the competition data.
+- `additional_epochs` sets the number of epochs that each network will train on the additional Google Maps API data.
+- `competition_epochs` sets the number of epochs that each network will train on the competition data.
 - `learning_rate_additional_data` sets the learning rate that will be used during the training on the additional Google Maps API data.
 - `learning_rate_competition_data` sets the learning rate that will be used during the training on the competition data.
 - `treshold` sets the treshold that will be used to compute the final submission on 16*16 batches.
 - `data_paths` controls the paths where to find the training data.
 - `model_id` saves the id of the network, so that every run will be saved in a different path.
 - `submission_path` controls where the submission file will be stored.
+- `csv_path` controls where the submission file of each single net will be stored.
 - `checkpoint_root` controls where the single networks weight checkpoint files will be stored.
 - `predictions_path` controls where the single model predictions to be averaged will be stored.
 - `final_predictions_path` controls where the final ensemble model predictions.
@@ -131,56 +132,74 @@ A json dump of the configurations for every run will also be stored in the submi
       "ures_resnet50v2",
       "uspp_resnet50v2"
    ],
-   "additional_epochs":40,
-   "competition_epochs":60,
    "loss":"dice",
    "learning_rate_additional_data":0.0001,
    "learning_rate_competition_data":1e-05,
    "treshold":0.4,
    "verbose":2,
    "data_paths":{
-      "data_dir":"/cluster/home/dchiappal/PochiMaPochi/data/",
-      "image_path":"/cluster/home/dchiappal/PochiMaPochi/data/training/images/",
-      "groundtruth_path":"/cluster/home/dchiappal/PochiMaPochi/data/training/groundtruth/",
-      "additional_images_path":"/cluster/home/dchiappal/PochiMaPochi/data/additional_data/images/",
-      "additional_masks_path":"/cluster/home/dchiappal/PochiMaPochi/data/additional_data/masks/",
-      "test_data_path":"/cluster/home/dchiappal/PochiMaPochi/data/test_images/"
+      "data_dir":"../data/",
+      "image_path":"../data/training/images/",
+      "groundtruth_path":"../data/training/groundtruth/",
+      "additional_images_path":"../data/additional_data/images/",
+      "additional_masks_path":"../data/additional_data/masks/",
+      "test_data_path":"../data/test_images/"
    },
-   "model_id":"27-06-2020,11-59",
-   "submission_root":"../submissions/submission_27-06-2020,11-59/",
-   "submission_path":"../submissions/submission_27-06-2020,11-59/submission.csv",
-   "checkpoint_root":"../submissions/submission_27-06-2020,11-59/checkpoints/",
-   "prediction_root":"../submissions/submission_27-06-2020,11-59/predictions/",
-   "final_predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/final_ensemble_predictions.npy",
+   "model_id":"submission_19-07-2020,11-13",
+   "submission_root":"../submissions/submission_19-07-2020,11-13/",
+   "submission_path":"../submissions/submission_19-07-2020,11-13/submission.csv",
+   "figures_pdf":"../submissions/submission_19-07-2020,11-13/predictions.pdf",
+   "checkpoint_root":"../submissions/submission_19-07-2020,11-13/checkpoints/",
+   "prediction_root":"../submissions/submission_19-07-2020,11-13/predictions/",
+   "csv_root":"../submissions/submission_19-07-2020,11-13/csvs/",
+   "final_predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/final_ensemble_predictions.npy",
    "u_xception":{
-      "batch_size":8,
-      "checkpoint":"../submissions/submission_27-06-2020,11-59/checkpoints/u_xception_weights.npy",
-      "predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/u_xception_predictions.npy"
+      "batch_size":2,
+      "additional_epochs":40,
+      "competition_epochs":60,
+      "checkpoint":"../submissions/submission_19-07-2020,11-13/checkpoints/0_u_xception_40g_60c_weights.npy",
+      "predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/0_u_xception_40g_60c_predictions.npy",
+      "csv_path":"../submissions/submission_19-07-2020,11-13/csvs/0_u_xception_40g_60c_csv.csv"
    },
    "ures_xception":{
-      "batch_size":4,
-      "checkpoint":"../submissions/submission_27-06-2020,11-59/checkpoints/ures_xception_weights.npy",
-      "predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/ures_xception_predictions.npy"
+      "batch_size":2,
+      "additional_epochs":40,
+      "competition_epochs":60,
+      "checkpoint":"../submissions/submission_19-07-2020,11-13/checkpoints/1_ures_xception_40g_60c_weights.npy",
+      "predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/1_ures_xception_40g_60c_predictions.npy",
+      "csv_path":"../submissions/submission_19-07-2020,11-13/csvs/1_ures_xception_40g_60c_csv.csv"
    },
    "uspp_xception":{
-      "batch_size":6,
-      "checkpoint":"../submissions/submission_27-06-2020,11-59/checkpoints/uspp_xception_weights.npy",
-      "predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/uspp_xception_predictions.npy"
+      "batch_size":2,
+      "additional_epochs":40,
+      "competition_epochs":60,
+      "checkpoint":"../submissions/submission_19-07-2020,11-13/checkpoints/2_uspp_xception_40g_60c_weights.npy",
+      "predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/2_uspp_xception_40g_60c_predictions.npy",
+      "csv_path":"../submissions/submission_19-07-2020,11-13/csvs/2_uspp_xception_40g_60c_csv.csv"
    },
    "u_resnet50v2":{
-      "batch_size":8,
-      "checkpoint":"../submissions/submission_27-06-2020,11-59/checkpoints/u_resnet50v2_weights.npy",
-      "predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/u_resnet50v2_predictions.npy"
+      "batch_size":2,
+      "additional_epochs":40,
+      "competition_epochs":60,
+      "checkpoint":"../submissions/submission_19-07-2020,11-13/checkpoints/3_u_resnet50v2_40g_60c_weights.npy",
+      "predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/3_u_resnet50v2_40g_60c_predictions.npy",
+      "csv_path":"../submissions/submission_19-07-2020,11-13/csvs/3_u_resnet50v2_40g_60c_csv.csv"
    },
    "ures_resnet50v2":{
-      "batch_size":6,
-      "checkpoint":"../submissions/submission_27-06-2020,11-59/checkpoints/ures_resnet50v2_weights.npy",
-      "predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/ures_resnet50v2_predictions.npy"
+      "batch_size":2,
+      "additional_epochs":40,
+      "competition_epochs":60,
+      "checkpoint":"../submissions/submission_19-07-2020,11-13/checkpoints/4_ures_resnet50v2_40g_60c_weights.npy",
+      "predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/4_ures_resnet50v2_40g_60c_predictions.npy",
+      "csv_path":"../submissions/submission_19-07-2020,11-13/csvs/4_ures_resnet50v2_40g_60c_csv.csv"
    },
    "uspp_resnet50v2":{
-      "batch_size":4,
-      "checkpoint":"../submissions/submission_27-06-2020,11-59/checkpoints/uspp_resnet50v2_weights.npy",
-      "predictions_path":"../submissions/submission_27-06-2020,11-59/predictions/uspp_resnet50v2_predictions.npy"
+      "batch_size":2,
+      "additional_epochs":40,
+      "competition_epochs":60,
+      "checkpoint":"../submissions/submission_19-07-2020,11-13/checkpoints/5_uspp_resnet50v2_40g_60c_weights.npy",
+      "predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/5_uspp_resnet50v2_40g_60c_predictions.npy",
+      "csv_path":"../submissions/submission_19-07-2020,11-13/csvs/5_uspp_resnet50v2_40g_60c_csv.csv"
    }
 }
 ```
@@ -329,10 +348,12 @@ Let's break down the arguments of the call:
 - `-o logs/x` means that the output of the job will be stored into the file `./logs/x`.
 - `-R "rusage[mem=8192, ngpus_excl_p=1]"` describes how much memory we request per CPU (8GB) and how many GPUs we ask (1).
 - `-R "select[gpu_model0==GeForceRTX2080Ti]"` explicitly requests a RTX2080Ti GPU for the job. We use it to speed up the run.
-- `-a` can be used to set the number of additional epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
-- `-c` can be used to set the number of competition epochs used to train the networks. If it's not specified, the default value in [config](/src/config.py) will be used.
 - `-n` can be used to set a different subset of nets to train rather than the default one. The nets must be passed iteratively (i.e. `-n u_xception -n ures_xception -n uspp_xception` will train the subset of nets: `['u_xception', 'ures_xception', 'uspp_xception']`). The nets passed must be a subset of `['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2', 'deepuresnet', 'dunet']`.
-- `-p` can be used to set the directory where to store the outputs of the training/prediction. If `-p` is specified, then such folder will be `../submissions/{-p}` rather than the default one `../submissions/{datetime_of_run}`.
+- `-a` can be used to set the number of additional epochs used to train the networks. The number of values given must be the same as the number of nets to train, and the order counts. An example would be: `-n u_xception -n u_xception -a 20 -a 30`: such commands will train two u_xceptions, one with 20 epochs on Google Data and the other one with 30 epochs on Google Data. If no value is specified, the default values in [config](/src/config.py) will be used.
+- `-c` can be used to set the number of competition epochs used to train the networks. The number of values given must be the same as the number of nets to train, and the order counts: the mechanism is the same as the one above. If no value is specified, the default values in [config](/src/config.py) will be used.
+- `-b` can be used to set the batch size of the networks to train. Like above, the number of values given must be the same as the number of nets to train, and the order counts. If no value is specified, the default values in [config](/src/config.py) will be used.
+- `-p` can be used to set the directory where to store the outputs of the training/prediction. If `-p` is specified, then such folder will be `../submissions/{-p}` rather than the default one `../submissions/submission_{timestamp_of_run}`.
+- `-t` can be used to set the treshold to be used to create the submission file.
 - `-s` can be used to use the run only to generate a prediction rather than training all the networks. To do so, `-s` should be set to `'predict'`, `-p` must be set to a output directory of a previous run and `-n` should be used to list the networks that the prediction ensemble should comprehend (if `-n` is not set, the ensemble will be generated out of the default six models). Obviously, to not run into an error when using `-s` to predict, the directory set in `-p` must contain the outputs of a previous training of the nets specified in `-n`.
 
 Once the job created by the run above is finished, the project will be completed and all the outputs of the training, along with the final predictions, will be at the `submission_root` path set in [config](/src/config.py) or in the directory named by the parameter `-p` of the call to `trainer.py`.

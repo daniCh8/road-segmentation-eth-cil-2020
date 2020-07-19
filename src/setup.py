@@ -19,6 +19,7 @@ setup(
             'opencv-python',
             'numpy',
             'pandas',
-            'matplotlib'
+            'matplotlib',
+            'pillow'
     ]
 )
