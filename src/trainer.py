@@ -51,9 +51,9 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--save_path', dest='save_path', type=str, default='default', help='name of dir where to store training outputs')
     parser.add_argument('-n', '--nets_to_train', dest='net_names', action='append', default=[], help='list of names of the networks to train')
     parser.add_argument('-s', '--scope', dest='scope', type=str, default='train', help='scope of the job - can be either train or predict')
-    parser.add_argument('-a', '--add_epochs', dest='additional_epochs', action='append', default=[], help='list of number of epochs used to train the nets on the google data')
-    parser.add_argument('-c', '--comp_epochs', dest='competition_epochs', action='append', default=[], help='list of number of epochs used to train the nets on the competition data')
-    parser.add_argument('-b', '--batch_sizes', dest='batch_sizes', action='append', default=[], help='list of batch sizes used to train the nets')
+    parser.add_argument('-a', '--add_epochs', dest='additional_epochs', type=int, action='append', default=[], help='list of number of epochs used to train the nets on the google data')
+    parser.add_argument('-c', '--comp_epochs', dest='competition_epochs', type=int, action='append', default=[], help='list of number of epochs used to train the nets on the competition data')
+    parser.add_argument('-b', '--batch_sizes', dest='batch_sizes', type=int, action='append', default=[], help='list of batch sizes used to train the nets')
     parser.add_argument('-t', '--treshold', dest='treshold', type=float, default=.4, help='treshold to use to make submissions')
     args = parser.parse_args()
 
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     additional_epochs = list(args.additional_epochs)
     competition_epochs = list(args.competition_epochs)
     batch_sizes = list(args.batch_sizes)
-    treshold = float(treshold)
+    treshold = float(args.treshold)
 
     assert len(nets)==0 or set(nets).issubset(set(['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2', 'deepuresnet', 'dunet'])), "nets_to_train must be a subset of ['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2', 'deepuresnet', 'dunet']"
     assert scope in ['train', 'predict'], "scope must be one between train or predict"
