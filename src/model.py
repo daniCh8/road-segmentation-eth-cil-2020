@@ -16,6 +16,7 @@ from nets.ures_resnet50v2 import create_model as ures_resnet50v2_net
 from nets.u_resnet50v2 import create_model as u_resnet50v2_net
 from nets.uspp_resnet50v2 import create_model as uspp_resnet50v2_net
 from nets.dunet import create_model as du_net
+from nets.unet import create_model as u_net
 
 import numpy as np
 import pandas as pd
@@ -61,7 +62,7 @@ def soft_dice_loss(y_true, y_pred):
 
 class NNet:
     def __init__(self, val_split=.0, model_to_load='None', net_type='u_xception', load_weights='None', data_paths=None):
-        assert net_type in ['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet'], "net_type must be one of ['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet']"
+        assert net_type in ['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet', 'unet'], "net_type must be one of ['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet', 'unet']"
         self.net_type = net_type
         print('creating model: {}'.format(net_type))
         if model_to_load == 'None':
@@ -81,6 +82,8 @@ class NNet:
                 self.model = uspp_resnet50v2_net()
             elif net_type == 'dunet':
                 self.model = du_net()
+            elif net_type == 'unet':
+                self.model = u_net()
                 
             print('created model: {}'.format(self.model.name))
             
