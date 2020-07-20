@@ -82,7 +82,7 @@ def create_config(net_types=[], save_dir='', batch_sizes=[], additional_epochs=[
     else:
         config_name = 'config.json'
     with open(config['submission_root'] + config_name, 'w') as fp:
-        json.dump(config, fp)
+        json.dump(config, fp, indent=4)
     
     return config
 
