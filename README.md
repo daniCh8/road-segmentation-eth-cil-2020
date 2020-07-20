@@ -4,6 +4,7 @@
   - [Team](#team)
   - [Project Description](#project-description)
   - [Network Types](#network-types)
+    - [U-Net](#u-net)
     - [U-Xception Net](#u-xception-net)
     - [URES-Xception](#ures-xception)
     - [USPP-Xception](#uspp-xception)
@@ -43,7 +44,10 @@ We used two types of blocks: [Spatial Pyramid Pooling blocks](https://arxiv.org/
 ![blocks](https://i.ibb.co/TLY2xzw/blocks-legend-v4.png)
 
 So, now that we described the general architecture of our networks, below are listed the different types and implementations of them.
- 
+
+### [U-Net](/src/nets/unet.py)
+It's a plain U-Net. No pretrained networks is used as encoder and no famous block is used to process the intermediate outputs.
+
 ### [U-Xception Net](/src/nets/u_xception.py)
 It's a U-Net that uses an Xception Net pretrained on the 'imagenet' dataset as encoder. The intermediate outputs of the Xception Net are taken as they are and fed to the decoders.
 
@@ -105,7 +109,7 @@ The training and checkpointing process of the nets is all handled by [model.py](
 When using [all_in_one_predictor.ipynb](/src/all_in_one_predictor.ipynb) or [trainer.py](/src/trainer.py), all the project parameters can be tuned via this [config](/src/config.py) file. Here is an explanation of each one of them:
 
 - `loss` controls which loss function will be used to train the single networks. Available loss functions are [dice loss](https://arxiv.org/abs/1911.02855) and [binary_cross_entropy](https://en.wikipedia.org/wiki/Cross_entropy).
-- `net_types` sets which nets will be used in the network. It must be a subset of: `['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet']`.
+- `net_types` sets which nets will be used in the network. It must be a subset of: `['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet', 'unet']`.
 - `additional_epochs` sets the number of epochs that each network will train on the additional Google Maps API data.
 - `competition_epochs` sets the number of epochs that each network will train on the competition data.
 - `learning_rate_additional_data` sets the learning rate that will be used during the training on the additional Google Maps API data.
@@ -348,7 +352,7 @@ Let's break down the arguments of the call:
 - `-o logs/x` means that the output of the job will be stored into the file `./logs/x`.
 - `-R "rusage[mem=8192, ngpus_excl_p=1]"` describes how much memory we request per CPU (8GB) and how many GPUs we ask (1).
 - `-R "select[gpu_model0==GeForceRTX2080Ti]"` explicitly requests a RTX2080Ti GPU for the job. We use it to speed up the run.
-- `-n` can be used to set a different subset of nets to train rather than the default one. The nets must be passed iteratively (i.e. `-n u_xception -n ures_xception -n uspp_xception` will train the subset of nets: `['u_xception', 'ures_xception', 'uspp_xception']`). The nets passed must be a subset of `['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2', 'deepuresnet', 'dunet']`.
+- `-n` can be used to set a different subset of nets to train rather than the default one. The nets must be passed iteratively (i.e. `-n u_xception -n ures_xception -n uspp_xception` will train the subset of nets: `['u_xception', 'ures_xception', 'uspp_xception']`). The nets passed must be a subset of `['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2', 'deepuresnet', 'dunet', 'unet']`.
 - `-a` can be used to set the number of additional epochs used to train the networks. The number of values given must be the same as the number of nets to train, and the order counts. An example would be: `-n u_xception -n u_xception -a 20 -a 30`: such commands will train two u_xceptions, one with 20 epochs on Google Data and the other one with 30 epochs on Google Data. If no value is specified, the default values in [config](/src/config.py) will be used.
 - `-c` can be used to set the number of competition epochs used to train the networks. The number of values given must be the same as the number of nets to train, and the order counts: the mechanism is the same as the one above. If no value is specified, the default values in [config](/src/config.py) will be used.
 - `-b` can be used to set the batch size of the networks to train. Like above, the number of values given must be the same as the number of nets to train, and the order counts. If no value is specified, the default values in [config](/src/config.py) will be used.
