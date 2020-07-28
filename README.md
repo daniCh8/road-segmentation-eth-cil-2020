@@ -33,7 +33,7 @@ The goal of the project is to create a model able to detect and extract road net
 The final outputs of our network on test data can be found [here](/predictions.pdf).
 
 ## Network Types
-All the networks used for the final ensemble (the first six below) are based on the same architecture. Here is a scheme of such architecture:
+All the networks we implemented are based on the same architecture. Here is a scheme of it:
 
 ![net_architecture](https://i.ibb.co/bKZK4nH/net-ushape-w-legend-18.png)
 
@@ -78,22 +78,15 @@ We gathered roughly 1000 additional images using the Google Maps API. The Jupyte
 We also used the [albumentations package](https://github.com/albumentations-team/albumentations) to augment the training dataset and make the networks able to generalize more. Those data augmentations are handled by the [DataGenerator](/src/DataGenerator.py) class.
 
 ## Final Predictions
-In order to obtain the predictions, we used a mean ensemble of six models. Those models were the following:
+In order to obtain the predictions, we created a mean ensemble of four [U-Xception](/src/nets/u_xception.py) networks trained with different parameters.
 
-- [U-Xception Net](/src/nets/u_xception.py)
-- [URES-Xception Net](/src/nets/ures_xception.py)
-- [USPP-Xception Net](/src/nets/uspp_xception.py)
-- [U-ResNet50V2](/src/nets/u_resnet50v2.py)
-- [URES-ResNet50V2](/src/nets/ures_resnet50v2.py)
-- [USPP-ResNet50V2](/src/nets/uspp_resnet50v2.py)
-
-Each model has been first trained for 20 epochs on the additional data with `learning rate = .0001`, and then fine-tuned for 60 epochs on the competition data with `learning rate = .00001`. During both training and fine-tuning all of the aforementioned data augmentation have been used. Moreover, during the `fit` of the networks, both the callbacks *Early Stopping* and *Learning Rate reduction on Plateau* were on. The whole pipeline of fitting can be found [here](/src/utils.py), in the method `single_model_training` (line 61).
+Each model has been first trained for `40` epochs on the additional data with `learning rate = .0001`, and then fine-tuned for a varying number of epochs (`[20, 30, 40, 50]`) on the competition data with `learning rate = .00001`. During both training and fine-tuning all of the aforementioned data augmentation have been used. Moreover, during the `fit` of the networks, both the callbacks *Early Stopping* and *Learning Rate reduction on Plateau* were on. The whole pipeline of fitting can be found [here](/src/utils.py), in the method `single_model_training`.
 
 After training all the models, a mean ensemble of their predictions is created. Note that the averaging is made on the outputs of the neural networks, and not on the final binary submission values.
 
 Finally, the submission `csv` file is created with the parameter  `treshold = .4`.
 
-Note that the test images have a shape of  `608*608*3`, whereas the training images are  `400*400*3`. In order to make the predictions, we cut the test images in four squares of  size `400*400*3`, and then recomposed the full prediction merging those blocks, averaging the pixels in common. This is done in the function  `merge prediction`, which can be found in the [utils](/src/utils.py) module.
+Note that the test images have a shape of `608*608*3`, whereas the training images are `400*400*3`. In order to make the predictions, we cut the test images in four squares of  size `400*400*3`, and then recomposed the full prediction merging those blocks, averaging the pixels in common. This is done in the function  `merge prediction`, which can be found in the [utils](/src/utils.py) module.
 
 ## Usage
 The whole ensemble can be trained from scratch either running all the cells in [this jupyter notebook](/src/all_in_one_predictor.ipynb) or using [this python file](/src/trainer.py) as explained below in the [Usage in Leonhard](#usage-in-leonhard) section. Note that you will still need the Google Maps API data, that we can't upload for copyright reasons.
@@ -122,89 +115,78 @@ When using [all_in_one_predictor.ipynb](/src/all_in_one_predictor.ipynb) or [tra
 - `checkpoint_root` controls where the single networks weight checkpoint files will be stored.
 - `predictions_path` controls where the single model predictions to be averaged will be stored.
 - `final_predictions_path` controls where the final ensemble model predictions.
+- `figures_pdf` controls where the pdf with the pictures of the different predictions will be stored.
 - `batch_size` controls the batch_size that will be used during the training. There's a different one for each net, in order to be able to reduce the batch size of the bigger networks and not run into a `ResourceExhausted` failure.
 
 A json dump of the configurations for every run will also be stored in the submission directory, so that every run is bind with its parameters. Below is an example of `config` file, in json syntax (dumped from a project run).
 
 ```rust
 {
-   "net_types":[
-      "u_xception",
-      "ures_xception",
-      "uspp_xception",
-      "u_resnet50v2",
-      "ures_resnet50v2",
-      "uspp_resnet50v2"
-   ],
-   "loss":"dice",
-   "learning_rate_additional_data":0.0001,
-   "learning_rate_competition_data":1e-05,
-   "treshold":0.4,
-   "verbose":2,
-   "data_paths":{
-      "data_dir":"../data/",
-      "image_path":"../data/training/images/",
-      "groundtruth_path":"../data/training/groundtruth/",
-      "additional_images_path":"../data/additional_data/images/",
-      "additional_masks_path":"../data/additional_data/masks/",
-      "test_data_path":"../data/test_images/"
-   },
-   "model_id":"submission_19-07-2020,11-13",
-   "submission_root":"../submissions/submission_19-07-2020,11-13/",
-   "submission_path":"../submissions/submission_19-07-2020,11-13/submission.csv",
-   "figures_pdf":"../submissions/submission_19-07-2020,11-13/predictions.pdf",
-   "checkpoint_root":"../submissions/submission_19-07-2020,11-13/checkpoints/",
-   "prediction_root":"../submissions/submission_19-07-2020,11-13/predictions/",
-   "csv_root":"../submissions/submission_19-07-2020,11-13/csvs/",
-   "final_predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/final_ensemble_predictions.npy",
-   "u_xception":{
-      "batch_size":2,
-      "additional_epochs":40,
-      "competition_epochs":60,
-      "checkpoint":"../submissions/submission_19-07-2020,11-13/checkpoints/0_u_xception_40g_60c_weights.npy",
-      "predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/0_u_xception_40g_60c_predictions.npy",
-      "csv_path":"../submissions/submission_19-07-2020,11-13/csvs/0_u_xception_40g_60c_csv.csv"
-   },
-   "ures_xception":{
-      "batch_size":2,
-      "additional_epochs":40,
-      "competition_epochs":60,
-      "checkpoint":"../submissions/submission_19-07-2020,11-13/checkpoints/1_ures_xception_40g_60c_weights.npy",
-      "predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/1_ures_xception_40g_60c_predictions.npy",
-      "csv_path":"../submissions/submission_19-07-2020,11-13/csvs/1_ures_xception_40g_60c_csv.csv"
-   },
-   "uspp_xception":{
-      "batch_size":2,
-      "additional_epochs":40,
-      "competition_epochs":60,
-      "checkpoint":"../submissions/submission_19-07-2020,11-13/checkpoints/2_uspp_xception_40g_60c_weights.npy",
-      "predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/2_uspp_xception_40g_60c_predictions.npy",
-      "csv_path":"../submissions/submission_19-07-2020,11-13/csvs/2_uspp_xception_40g_60c_csv.csv"
-   },
-   "u_resnet50v2":{
-      "batch_size":2,
-      "additional_epochs":40,
-      "competition_epochs":60,
-      "checkpoint":"../submissions/submission_19-07-2020,11-13/checkpoints/3_u_resnet50v2_40g_60c_weights.npy",
-      "predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/3_u_resnet50v2_40g_60c_predictions.npy",
-      "csv_path":"../submissions/submission_19-07-2020,11-13/csvs/3_u_resnet50v2_40g_60c_csv.csv"
-   },
-   "ures_resnet50v2":{
-      "batch_size":2,
-      "additional_epochs":40,
-      "competition_epochs":60,
-      "checkpoint":"../submissions/submission_19-07-2020,11-13/checkpoints/4_ures_resnet50v2_40g_60c_weights.npy",
-      "predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/4_ures_resnet50v2_40g_60c_predictions.npy",
-      "csv_path":"../submissions/submission_19-07-2020,11-13/csvs/4_ures_resnet50v2_40g_60c_csv.csv"
-   },
-   "uspp_resnet50v2":{
-      "batch_size":2,
-      "additional_epochs":40,
-      "competition_epochs":60,
-      "checkpoint":"../submissions/submission_19-07-2020,11-13/checkpoints/5_uspp_resnet50v2_40g_60c_weights.npy",
-      "predictions_path":"../submissions/submission_19-07-2020,11-13/predictions/5_uspp_resnet50v2_40g_60c_predictions.npy",
-      "csv_path":"../submissions/submission_19-07-2020,11-13/csvs/5_uspp_resnet50v2_40g_60c_csv.csv"
-   }
+    "net_types": [
+        "u_xception",
+        "u_xception",
+        "u_xception",
+        "u_xception"
+    ],
+    "net_names": [
+        "0_u_xception",
+        "1_u_xception",
+        "2_u_xception",
+        "3_u_xception"
+    ],
+    "loss": "dice",
+    "learning_rate_additional_data": 0.0001,
+    "learning_rate_competition_data": 1e-05,
+    "treshold": 0.4,
+    "verbose": 2,
+    "data_paths": {
+        "data_dir": "/cluster/home/dchiappal/PochiMaPochi/data/",
+        "image_path": "/cluster/home/dchiappal/PochiMaPochi/data/training/images/",
+        "groundtruth_path": "/cluster/home/dchiappal/PochiMaPochi/data/training/groundtruth/",
+        "additional_images_path": "/cluster/home/dchiappal/PochiMaPochi/data/additional_data/images/",
+        "additional_masks_path": "/cluster/home/dchiappal/PochiMaPochi/data/additional_data/masks/",
+        "test_data_path": "/cluster/home/dchiappal/PochiMaPochi/data/test_images/"
+    },
+    "model_id": "u_x_23450",
+    "submission_root": "../submissions/u_x_23450/",
+    "submission_path": "../submissions/u_x_23450/submission.csv",
+    "figures_pdf": "../submissions/u_x_23450/predictions.pdf",
+    "checkpoint_root": "../submissions/u_x_23450/checkpoints/",
+    "prediction_root": "../submissions/u_x_23450/predictions/",
+    "csv_root": "../submissions/u_x_23450/csvs/",
+    "final_predictions_path": "../submissions/u_x_23450/predictions/final_ensemble_predictions.npy",
+    "0_u_xception": {
+        "batch_size": 4,
+        "additional_epochs": 40,
+        "competition_epochs": 20,
+        "checkpoint": "../submissions/u_x_23450/checkpoints/0_u_xception_40g_20c_weights.npy",
+        "predictions_path": "../submissions/u_x_23450/predictions/0_u_xception_40g_20c_predictions.npy",
+        "csv_path": "../submissions/u_x_23450/csvs/0_u_xception_40g_20c_csv.csv"
+    },
+    "1_u_xception": {
+        "batch_size": 4,
+        "additional_epochs": 40,
+        "competition_epochs": 30,
+        "checkpoint": "../submissions/u_x_23450/checkpoints/1_u_xception_40g_30c_weights.npy",
+        "predictions_path": "../submissions/u_x_23450/predictions/1_u_xception_40g_30c_predictions.npy",
+        "csv_path": "../submissions/u_x_23450/csvs/1_u_xception_40g_30c_csv.csv"
+    },
+    "2_u_xception": {
+        "batch_size": 4,
+        "additional_epochs": 40,
+        "competition_epochs": 40,
+        "checkpoint": "../submissions/u_x_23450/checkpoints/2_u_xception_40g_40c_weights.npy",
+        "predictions_path": "../submissions/u_x_23450/predictions/2_u_xception_40g_40c_predictions.npy",
+        "csv_path": "../submissions/u_x_23450/csvs/2_u_xception_40g_40c_csv.csv"
+    },
+    "3_u_xception": {
+        "batch_size": 4,
+        "additional_epochs": 40,
+        "competition_epochs": 50,
+        "checkpoint": "../submissions/u_x_23450/checkpoints/3_u_xception_40g_50c_weights.npy",
+        "predictions_path": "../submissions/u_x_23450/predictions/3_u_xception_40g_50c_predictions.npy",
+        "csv_path": "../submissions/u_x_23450/csvs/3_u_xception_40g_50c_csv.csv"
+    }
 }
 ```
 
@@ -215,13 +197,15 @@ Note that the models checkpoints are stored as numpy files. Indeed, we're not ac
 The external libraries we used are listed in the [setup](/src/setup.py) file. Here is a recap:
 - `tensorflow-gpu==1.15.2`
 - `keras==2.3.1`
-- `matplotlib`
-- `numpy`
-- `pandas`
-- `scikit-learn`
 - `scikit-image`
 - `albumentations`
 - `tqdm`
+- `scikit-learn`
+- `opencv-python`
+- `numpy`
+- `pandas`
+- `matplotlib`
+- `pillow`
 
 All of those packages can be easily installed using `pip`.
 
