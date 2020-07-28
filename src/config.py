@@ -1,20 +1,17 @@
 from datetime import datetime
 import os
 import json
+import re
 
 now = datetime.now()
 timestamp = now.strftime("%d-%m-%Y,%H-%M")
+
 
 def create_config(net_types=[], save_dir='', batch_sizes=[], additional_epochs=[], competition_epochs=[], treshold=.4):
     config = dict()
 
     if net_types == []:
-        net_types = ['u_xception',
-                     'ures_xception',
-                     'uspp_xception',
-                     'u_resnet50v2',
-                     'ures_resnet50v2',
-                     'uspp_resnet50v2']
+        net_types = ['u_xception' for i in range(4)]
     config['net_types'] = net_types
 
     config['net_names'] = []
@@ -51,7 +48,13 @@ def create_config(net_types=[], save_dir='', batch_sizes=[], additional_epochs=[
     os.makedirs(config['csv_root'], exist_ok=True)
 
     if batch_sizes == []:
-        batch_sizes = [2 for i in net_types]
+        for net in net_types:
+            if net == 'unet':
+                batch_sizes.append(8)
+            elif net in ['u_xception', 'u_resnet50v2']:
+                batch_sizes.append(4)
+            else:
+                batch_sizes.append(2)
     else:
         assert len(batch_sizes) == len(net_types), "the number of batch sizes provided is different than the number of nets to train"
     
@@ -61,7 +64,10 @@ def create_config(net_types=[], save_dir='', batch_sizes=[], additional_epochs=[
         assert len(additional_epochs) == len(net_types), "the number of additional epochs provided is different than the number of nets to train"
     
     if competition_epochs == []:
-        competition_epochs = [60 for i in net_types]
+        start_at = 20
+        for i in net_types:
+            competition_epochs.append(start_at)
+            start_at += 10
     else:
         assert len(competition_epochs) == len(net_types), "the number of competition epochs provided is different than the number of nets to train"
     
@@ -89,9 +95,13 @@ def create_config(net_types=[], save_dir='', batch_sizes=[], additional_epochs=[
 
 def restore_config(path=''):
     if path == '':
-        path = '../submissions/submission_{}/config.json'.format(timestamp, timestamp)
+        dirs = os.listdir('../submissions/')
+        reresults = [re.search(r'\d{2}-\d{2}-\d{4},\d{2}-\d{2}', d) for d in dirs]
+        dates = [d.group() for d in reresults if d != None]
+        sorted_dates = sorted(dates, key=lambda date: datetime.strptime(date, "%d-%m-%Y,%H-%M"))
+        path = '../submissions/submission_{}/config.json'.format(sorted_dates[len(sorted_dates)-1])
     else:
-        path = '../submissions/{}/config.json'.format(path, timestamp)
+        path = '../submissions/{}/config.json'.format(path)
     with open(path, 'r') as fp:
         config = json.load(fp)
     
