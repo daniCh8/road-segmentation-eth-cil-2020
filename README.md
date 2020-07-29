@@ -6,13 +6,7 @@
   - [Network Types](#network-types)
     - [U-Net](#u-net)
     - [U-Xception Net](#u-xception-net)
-    - [URES-Xception](#ures-xception)
-    - [USPP-Xception](#uspp-xception)
     - [U-ResNet50V2 Net](#u-resnet50v2-net)
-    - [URES-ResNet50V2 Net](#ures-resnet50v2-net)
-    - [USPP-ResNet50V2 Net](#uspp-resnet50v2-net)
-    - [DeepRes-UNet](#deepres-unet)
-    - [D-UNet](#d-unet)
   - [Additional Data](#additional-data)
   - [Final Predictions](#final-predictions)
   - [Usage](#usage)
@@ -33,17 +27,9 @@ The goal of the project is to create a model able to detect and extract road net
 The final outputs of our network on test data can be found [here](/predictions.pdf).
 
 ## Network Types
-All the networks we implemented are based on the same architecture. Here is a scheme of it:
+All the networks we used are based on the same architecture, the well-known [u-net](https://arxiv.org/abs/1505.04597). In addition to the plain one described on the paper, we created two versions of it that make use of pre-trained networks in the encoder half. The pre-trained networks we tried are the [ResNet](https://arxiv.org/abs/1512.03385) and the [Xception](https://arxiv.org/abs/1610.02357).
 
-![net_architecture](https://i.ibb.co/bKZK4nH/net-ushape-w-legend-18.png)
-
-As shown by the graph, the skeleton is basically a U-Net that uses a pre-trained model on the encoder part. What vary between our different networks are such pre-trained models and the decoder/encoder blocks used to process the intermediate outputs.
-
-We used two types of blocks: [Spatial Pyramid Pooling blocks](https://arxiv.org/abs/1406.4729) and [Residual blocks](https://arxiv.org/abs/1512.03385). Below is a sketch of them.
-
-![blocks](https://i.ibb.co/TLY2xzw/blocks-legend-v4.png)
-
-So, now that we described the general architecture of our networks, below are listed the different types and implementations of them.
+Below are listed the single networks:
 
 ### [U-Net](/src/nets/unet.py)
 It's a plain U-Net. No pretrained networks is used as encoder and no famous block is used to process the intermediate outputs.
@@ -51,26 +37,8 @@ It's a plain U-Net. No pretrained networks is used as encoder and no famous bloc
 ### [U-Xception Net](/src/nets/u_xception.py)
 It's a U-Net that uses an Xception Net pretrained on the 'imagenet' dataset as encoder. The intermediate outputs of the Xception Net are taken as they are and fed to the decoders.
 
-### [URES-Xception](/src/nets/ures_xception.py)
-It's another U-Net that uses an Xception Net pretrained on the 'imagenet' dataset as encoder, but this time the intermediate outputs of the Xception Net are processed by two residual blocks before being fed to the decoders.
-
-### [USPP-Xception](/src/nets/uspp_xception.py)
-It's the same architecture of the network above, but instead of being processed by two residual blocks, the Xception outputs are refined by Spatial Pyramid blocks.
-
 ### [U-ResNet50V2 Net](/src/nets/u_resnet50v2.py)
 It's a U-Net that uses a ResNet50V2 pretrained on the 'imagenet' dataset as encoder. The intermediate outputs of the ResNet50V2 are vanilla fed to the decoders.
-
-### [URES-ResNet50V2 Net](/src/nets/ures_resnet50v2.py)
-It's a U-Net that uses a pretrained ResNet50V2 as encoder. Like in the URES-Xception Net, the intermediate outputs of the pretrained net are processed by two residual blocks before being fed to the decoders.
-
-### [USPP-ResNet50V2 Net](/src/nets/uspp_resnet50v2.py)
-It's the same architecture of the network above, but instead of being processed by two residual blocks, the ResNetV2 outputs are refined by Spatial Pyramid blocks.
-
-### [DeepRes-UNet](/src/nets/deepresunet.py)
-It's a deep U-Net that does not use any pretrained net as encoder, but only residual blocks.
-
-### [D-UNet](/src/nets/dunet.py)
-It's a dimension fusion U-Net, that process the input both in 4D and 3D, before mixing all together.
 
 ## Additional Data
 We gathered roughly 1000 additional images using the Google Maps API. The Jupyter Notebook we used to do so is available [here](/additional_maps_data.ipynb). Note that you will need an API key to be able to run it.
@@ -102,7 +70,7 @@ The training and checkpointing process of the nets is all handled by [model.py](
 When using [all_in_one_predictor.ipynb](/src/all_in_one_predictor.ipynb) or [trainer.py](/src/trainer.py), all the project parameters can be tuned via this [config](/src/config.py) file. Here is an explanation of each one of them:
 
 - `loss` controls which loss function will be used to train the single networks. Available loss functions are [dice loss](https://arxiv.org/abs/1911.02855) and [binary_cross_entropy](https://en.wikipedia.org/wiki/Cross_entropy).
-- `net_types` sets which nets will be used in the network. It must be a subset of: `['u_xception', 'ures_xception', 'uspp_xception', 'deepuresnet', 'u_resnet50v2',  'ures_resnet50v2', 'uspp_resnet50v2', 'dunet', 'unet']`.
+- `net_types` sets which nets will be used in the network. It must be a subset of: `['u_xception', 'u_resnet50v2', 'unet']`.
 - `additional_epochs` sets the number of epochs that each network will train on the additional Google Maps API data.
 - `competition_epochs` sets the number of epochs that each network will train on the competition data.
 - `learning_rate_additional_data` sets the learning rate that will be used during the training on the additional Google Maps API data.
@@ -336,7 +304,7 @@ Let's break down the arguments of the call:
 - `-o logs/x` means that the output of the job will be stored into the file `./logs/x`.
 - `-R "rusage[mem=8192, ngpus_excl_p=1]"` describes how much memory we request per CPU (8GB) and how many GPUs we ask (1).
 - `-R "select[gpu_model0==GeForceRTX2080Ti]"` explicitly requests a RTX2080Ti GPU for the job. We use it to speed up the run.
-- `-n` can be used to set a different subset of nets to train rather than the default one. The nets must be passed iteratively (i.e. `-n u_xception -n ures_xception -n uspp_xception` will train the subset of nets: `['u_xception', 'ures_xception', 'uspp_xception']`). The nets passed must be a subset of `['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2', 'deepuresnet', 'dunet', 'unet']`.
+- `-n` can be used to set a different subset of nets to train rather than the default one. The nets must be passed iteratively (i.e. `-n u_xception -n u_xception -n u_resnet50v2` will train the subset of nets: `['u_xception', 'u_xception', 'u_resnet50v2']`). The nets passed must be a subset of `['u_xception', 'u_resnet50v2', 'unet']`.
 - `-a` can be used to set the number of additional epochs used to train the networks. The number of values given must be the same as the number of nets to train, and the order counts. An example would be: `-n u_xception -n u_xception -a 20 -a 30`: such commands will train two u_xceptions, one with 20 epochs on Google Data and the other one with 30 epochs on Google Data. If no value is specified, the default values in [config](/src/config.py) will be used.
 - `-c` can be used to set the number of competition epochs used to train the networks. The number of values given must be the same as the number of nets to train, and the order counts: the mechanism is the same as the one above. If no value is specified, the default values in [config](/src/config.py) will be used.
 - `-b` can be used to set the batch size of the networks to train. Like above, the number of values given must be the same as the number of nets to train, and the order counts. If no value is specified, the default values in [config](/src/config.py) will be used.
