@@ -65,7 +65,7 @@ if __name__ == '__main__':
     batch_sizes = list(args.batch_sizes)
     treshold = float(args.treshold)
 
-    assert len(nets)==0 or set(nets).issubset(set(['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2', 'deepuresnet', 'dunet', 'unet'])), "nets_to_train must be a subset of ['u_xception', 'ures_xception', 'uspp_xception', 'u_resnet50v2', 'ures_resnet50v2', 'uspp_resnet50v2', 'deepuresnet', 'dunet', 'unet']"
+    assert len(nets)==0 or set(nets).issubset(set(['u_xception', 'u_resnet50v2', 'unet'])), "nets_to_train must be a subset of ['u_xception', 'u_resnet50v2', 'unet']"
     assert scope in ['train', 'predict', 'train+predict'], "scope must be one between train, predict, train+predict"
     assert treshold>=0.0 and treshold<=1.0, "treshold must be a float between 0. and 1.0"
 
