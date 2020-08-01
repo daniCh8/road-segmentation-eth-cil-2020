@@ -24,7 +24,7 @@ The goal of the project is to create a model able to detect and extract road net
 
 ![sample_prediction](https://i.postimg.cc/dt55wPQS/cropped-sample-prediction.png)
 
-The final outputs of our network on test data can be found [here](/predictions.pdf).
+The final outputs of our network on test data can be found [here](/predictions.pdf). We ranked second in the overall kaggle competition.
 
 ## Network Types
 All the networks we used are based on the same architecture, the well-known [u-net](https://arxiv.org/abs/1505.04597). In addition to the plain one described on the paper, we created two versions of it that make use of pre-trained networks in the encoder half. The pre-trained networks we tried are the [ResNet](https://arxiv.org/abs/1512.03385) and the [Xception](https://arxiv.org/abs/1610.02357).
